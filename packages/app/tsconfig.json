@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite/client"]
+  },
+  "exclude": ["node_modules"],
+  "extends": "@nelsonlaidev/typescript-config/react-library.json",
+  "include": ["**/*.ts", "**/*.tsx"]
+}

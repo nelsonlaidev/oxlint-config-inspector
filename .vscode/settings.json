@@ -1,0 +1,21 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
+
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "oxc.fmt.configPath": "oxfmt.config.ts",
+
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+
+  "tailwindCSS.classFunctions": ["cva", "cn"],
+
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.preferences.preferTypeOnlyAutoImports": true,
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["dist/**"]
+    },
+    "oxlint-config-inspector#build": {
+      "dependsOn": ["@oxlint-config-inspector/core#build", "@oxlint-config-inspector/app#build"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["dist/**"]
+    },
+    "test": {},
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "oxlint-config-inspector#test": {
+      "dependsOn": ["build"]
+    },
+    "oxlint-config-inspector#test:watch": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true
+    },
+    "typecheck": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

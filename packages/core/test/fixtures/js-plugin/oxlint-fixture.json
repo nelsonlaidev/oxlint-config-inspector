@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../../node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": [
+    "./plugin.mjs",
+    {
+      "name": "alias",
+      "specifier": "./plugin.mjs"
+    }
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.js"],
+      "jsPlugins": ["./plugin.mjs", "./invalid.mjs"]
+    }
+  ]
+}

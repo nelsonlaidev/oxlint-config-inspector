@@ -1,0 +1,19 @@
+{
+  "$schema": "../../../../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["./base.json"],
+  "plugins": ["typescript"],
+  "rules": {
+    "eslint/no-debugger": "error"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "typescript/no-explicit-any": "error"
+      }
+    }
+  ],
+  "env": {
+    "builtin": true
+  }
+}

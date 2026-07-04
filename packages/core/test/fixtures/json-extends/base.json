@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../../../node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react"],
+  "rules": {
+    "eqeqeq": "warn",
+    "eslint/no-debugger": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.js"],
+      "rules": {
+        "no-alert": "warn"
+      }
+    }
+  ],
+  "env": {
+    "node": true
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "jsPlugins": ["./plugin.mjs"]
+}

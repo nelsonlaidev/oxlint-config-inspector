@@ -1,0 +1,20 @@
+{
+  // JSONC root config is a valid Oxlint config format.
+  "$schema": "../../../../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["./base.jsonc"],
+  "env": {
+    "builtin": true,
+  },
+  "plugins": ["typescript"],
+  "rules": {
+    "eslint/no-debugger": "error",
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "typescript/no-explicit-any": "error",
+      },
+    },
+  ],
+}

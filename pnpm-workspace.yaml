@@ -1,0 +1,23 @@
+packages:
+  - 'packages/*'
+
+catalog:
+  vite: 8.1.3
+
+catalogs:
+  dev:
+    '@types/node': 26.0.1
+    tsdown: 0.22.3
+    vitest: 4.1.9
+
+saveExact: true
+
+publicHoistPattern:
+  - '*eslint-plugin*'
+
+allowBuilds:
+  esbuild: true
+
+minimumReleaseAgeStrict: true
+minimumReleaseAgeExclude:
+  - '@nelsonlaidev/*'

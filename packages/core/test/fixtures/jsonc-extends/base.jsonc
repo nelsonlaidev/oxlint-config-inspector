@@ -1,0 +1,22 @@
+{
+  /*
+   * Extended JSONC configs can use comments and trailing commas too.
+   */
+  "$schema": "../../../../../node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "warn",
+  },
+  "plugins": ["react"],
+  "rules": {
+    "eqeqeq": "warn",
+    "eslint/no-debugger": "warn",
+  },
+  "overrides": [
+    {
+      "files": ["**/*.js"],
+      "rules": {
+        "no-alert": "warn",
+      },
+    },
+  ],
+}

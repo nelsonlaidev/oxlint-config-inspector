@@ -1,0 +1,58 @@
+{
+  "name": "@oxlint-config-inspector/core",
+  "version": "0.0.0",
+  "description": "Core config loading and inspection utilities for Oxlint Config Inspector.",
+  "keywords": [
+    "config-inspector",
+    "eslint",
+    "lint",
+    "oxlint",
+    "oxlint-config",
+    "typescript"
+  ],
+  "homepage": "https://github.com/nelsonlaidev/oxlint-config-inspector/tree/main/packages/core",
+  "bugs": {
+    "url": "https://github.com/nelsonlaidev/oxlint-config-inspector/issues"
+  },
+  "license": "MIT",
+  "author": "Nelson Lai <me@nelsonlai.dev> (https://github.com/nelsonlaidev/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nelsonlaidev/oxlint-config-inspector.git",
+    "directory": "packages/core"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "cosmiconfig": "9.0.2",
+    "jsonc-parser": "3.3.1",
+    "tinyexec": "1.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:dev",
+    "tsdown": "catalog:dev",
+    "vitest": "catalog:dev"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@oxlint-config-inspector/root",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Nelson Lai <me@nelsonlai.dev> (https://github.com/nelsonlaidev/)",
+  "type": "module",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "typecheck": "turbo typecheck",
+    "tegami": "node scripts/tegami.ts"
+  },
+  "devDependencies": {
+    "@eslint-react/eslint-plugin": "5.10.0",
+    "@nelsonlaidev/oxfmt-config": "0.2.0",
+    "@nelsonlaidev/oxlint-config": "0.4.0",
+    "@nelsonlaidev/typescript-config": "1.2.2",
+    "eslint-plugin-better-tailwindcss": "4.6.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "oxfmt": "0.57.0",
+    "oxlint": "1.72.0",
+    "oxlint-tsgolint": "0.24.0",
+    "tegami": "1.1.2",
+    "turbo": "2.10.2",
+    "typescript": "6.0.3"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

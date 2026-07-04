@@ -1,0 +1,54 @@
+{
+  "name": "oxlint-config-inspector",
+  "version": "0.0.0",
+  "description": "CLI tool for inspecting and browsing Oxlint configuration files.",
+  "keywords": [
+    "config-inspector",
+    "eslint",
+    "lint",
+    "oxlint",
+    "oxlint-config",
+    "typescript"
+  ],
+  "homepage": "https://github.com/nelsonlaidev/oxlint-config-inspector/tree/main/packages/cli",
+  "bugs": {
+    "url": "https://github.com/nelsonlaidev/oxlint-config-inspector/issues"
+  },
+  "license": "MIT",
+  "author": "Nelson Lai <me@nelsonlai.dev> (https://github.com/nelsonlaidev/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nelsonlaidev/oxlint-config-inspector.git",
+    "directory": "packages/cli"
+  },
+  "bin": "./bin/oxlint-config-inspector.mjs",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown && node scripts/copy-app-dist.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@oxlint-config-inspector/core": "workspace:*",
+    "picocolors": "1.1.1",
+    "vite": "catalog:",
+    "yargs": "18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:dev",
+    "@types/yargs": "17.0.35",
+    "tsdown": "catalog:dev",
+    "vitest": "catalog:dev"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
