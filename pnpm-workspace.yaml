@@ -18,6 +18,5 @@ publicHoistPattern:
 allowBuilds:
   esbuild: true
 
-minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
-  - '@nelsonlaidev/*'
+  - tegami@1.2.0

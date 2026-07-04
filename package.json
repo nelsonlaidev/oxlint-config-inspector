@@ -26,7 +26,8 @@
     "oxfmt": "0.57.0",
     "oxlint": "1.72.0",
     "oxlint-tsgolint": "0.24.0",
-    "tegami": "1.1.2",
+    "tegami": "1.2.0",
+    "tinyexec": "1.2.4",
     "turbo": "2.10.2",
     "typescript": "6.0.3"
   },
