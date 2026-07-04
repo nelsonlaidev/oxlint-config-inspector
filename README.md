@@ -11,6 +11,9 @@ Oxlint Config Inspector loads an Oxlint config, resolves supported `extends`
 chains, discovers builtin and JavaScript plugin rules, and renders the result as
 JSON or an interactive web UI.
 
+![Preview 1](./assets/preview-1.png)
+![Preview 2](./assets/preview-2.png)
+
 ## Packages
 
 | Package                         | Purpose                                                     |
