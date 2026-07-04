@@ -1,8 +1,8 @@
 # oxlint-config-inspector
 
-[![Version](https://img.shields.io/npm/v/@oxlint-config-inspector/cli?style=flat&colorA=333333&colorB=000000)](https://npmx.dev/package/@oxlint-config-inspector/cli)
-[![Downloads](https://img.shields.io/npm/dt/@oxlint-config-inspector/cli.svg?style=flat&colorA=333333&colorB=000000)](https://npmx.dev/package/@oxlint-config-inspector/cli)
-[![License](https://img.shields.io/npm/l/@oxlint-config-inspector/cli?style=flat&colorA=333333&colorB=000000)](https://github.com/nelsonlaidev/oxlint-config-inspector/blob/main/LICENSE)
+[![Version](https://img.shields.io/npm/v/oxlint-config-inspector?style=flat&colorA=333333&colorB=000000)](https://npmx.dev/package/oxlint-config-inspector)
+[![Downloads](https://img.shields.io/npm/dt/oxlint-config-inspector.svg?style=flat&colorA=333333&colorB=000000)](https://npmx.dev/package/oxlint-config-inspector)
+[![License](https://img.shields.io/npm/l/oxlint-config-inspector?style=flat&colorA=333333&colorB=000000)](https://github.com/nelsonlaidev/oxlint-config-inspector/blob/main/LICENSE)
 
 CLI tool for inspecting and browsing Oxlint configuration files.
 

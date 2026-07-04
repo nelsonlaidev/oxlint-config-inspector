@@ -3,6 +3,7 @@
 [![Version](https://img.shields.io/npm/v/@oxlint-config-inspector/core?style=flat&colorA=333333&colorB=000000)](https://npmx.dev/package/@oxlint-config-inspector/core)
 [![Downloads](https://img.shields.io/npm/dt/@oxlint-config-inspector/core.svg?style=flat&colorA=333333&colorB=000000)](https://npmx.dev/package/@oxlint-config-inspector/core)
 [![License](https://img.shields.io/npm/l/@oxlint-config-inspector/core?style=flat&colorA=333333&colorB=000000)](https://github.com/nelsonlaidev/oxlint-config-inspector/blob/main/LICENSE)
+[![Release with](https://img.shields.io/badge/release_with-tegami-000000?style=flat&colorA=333333)](https://tegami.fuma-nama.dev)
 
 Inspect, browse, and debug your Oxlint configuration.
 
