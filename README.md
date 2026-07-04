@@ -98,3 +98,7 @@ pnpm build --filter=oxlint-config-inspector
 node packages/cli/bin/oxlint-config-inspector.mjs inspect --output packages/app/public/data.json
 pnpm dev
 ```
+
+## License
+
+[MIT](./LICENSE)
