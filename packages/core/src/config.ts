@@ -5,6 +5,7 @@ import type { OxlintConfig } from 'oxlint'
 import path from 'node:path'
 
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig'
+import { createJiti } from 'jiti'
 import { parse, printParseErrorCode } from 'jsonc-parser'
 
 type JsonOxlintConfig = Omit<OxlintConfig, 'extends'> & {
@@ -44,11 +45,14 @@ export type LoadedOxlintConfig = {
 export const searchPlaces = ['.oxlintrc.json', '.oxlintrc.jsonc', 'oxlint.config.ts']
 
 function createExplorer(cache: boolean) {
+  const loadTs = createTypeScriptLoader(cache)
+
   return cosmiconfig('oxlint', {
     cache,
     loaders: {
       ...defaultLoaders,
       '.jsonc': loadJsonc,
+      '.ts': loadTs,
     },
     searchPlaces,
   })
@@ -66,6 +70,15 @@ function loadJsonc(filepath: string, content: string): Record<string, unknown> |
   }
 
   return config ?? null
+}
+
+function createTypeScriptLoader(cache: boolean): (filepath: string) => Promise<Record<string, unknown> | null> {
+  const jiti = createJiti(import.meta.url, {
+    fsCache: cache,
+    moduleCache: cache,
+  })
+
+  return async (filepath: string) => jiti.import<Record<string, unknown> | null>(filepath, { default: true })
 }
 
 /**

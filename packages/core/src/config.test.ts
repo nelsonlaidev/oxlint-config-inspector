@@ -126,6 +126,34 @@ describe('getConfig', () => {
     })
   })
 
+  test('loads TypeScript config with file-based extends', async () => {
+    const cwd = new URL('ts-extends/', fixtureRoot)
+    const result = await getConfig({ configFile: 'oxlint-fixture.config.ts', cwd: cwd.pathname })
+
+    expect(result).not.toBeNull()
+    expect(result?.files.map((file) => file.replace(cwd.pathname, ''))).toEqual(['oxlint-fixture.config.ts'])
+    expect(result?.config).toMatchObject({
+      env: {
+        browser: true,
+      },
+      overrides: [
+        {
+          files: ['**/*.ts'],
+          rules: {
+            'typescript/no-explicit-any': 'error',
+          },
+        },
+      ],
+      plugins: ['typescript', 'react'],
+      rules: {
+        'base/rule': 'warn',
+        'own/rule': 'error',
+      },
+    })
+    expect(result?.config).not.toHaveProperty('categories')
+    expect(result?.config).not.toHaveProperty('jsPlugins')
+  })
+
   test('throws for circular JSON extends', async () => {
     const cwd = new URL('circular/', fixtureRoot)
 
