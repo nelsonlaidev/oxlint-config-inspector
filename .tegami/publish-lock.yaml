@@ -1,6 +1,12 @@
 core:changelogs:
-  - content: "---\npackages:\n  group:oxlint-config-inspector:\n    type: major\n---\n\n## Initial beta release\n"
-    filename: 2026-07-04-mr666nqk.md
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Improve build output\n\nThe static inspector build command now reports each build step with shorter relative paths when possible. The inspect command also confirms where it writes results when using `--output`.\n"
+    filename: 2026-07-05-b7xq9m2r.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Add favicon and logo to header\n\n- Added favicon link to `index.html` for the app\n- Added `Logo` component to the header alongside the app title\n"
+    filename: 2026-07-05-c0da41a4.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Add theme switching\n\nThe config inspector now includes a header control for switching between light and dark themes, with transitions disabled during theme changes to avoid visual flicker.\n"
+    filename: 2026-07-05-vk8q2n4p.md
     v: 0.0.0
 core:packages:
   - id: npm:@oxlint-config-inspector/root
@@ -8,12 +14,12 @@ core:packages:
   - id: npm:@oxlint-config-inspector/app
     updated: false
   - changelogIds:
-      - 2026-07-04-mr666nqk.md
+      - 2026-07-05-b7xq9m2r.md
+      - 2026-07-05-c0da41a4.md
+      - 2026-07-05-vk8q2n4p.md
     id: npm:oxlint-config-inspector
     updated: true
-  - changelogIds:
-      - 2026-07-04-mr666nqk.md
-    id: npm:@oxlint-config-inspector/core
+  - id: npm:@oxlint-config-inspector/core
     updated: true
 npm:packages:
   - id: npm:@oxlint-config-inspector/root
