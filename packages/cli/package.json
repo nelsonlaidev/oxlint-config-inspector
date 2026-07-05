@@ -39,6 +39,7 @@
   "dependencies": {
     "@oxlint-config-inspector/core": "workspace:*",
     "picocolors": "1.1.1",
+    "sirv": "3.0.2",
     "vite": "catalog:",
     "yargs": "18.0.0"
   },

@@ -7,6 +7,7 @@ import { performance } from 'node:perf_hooks'
 
 import { inspectConfig, searchPlaces } from '@oxlint-config-inspector/core'
 import colors from 'picocolors'
+import sirv from 'sirv'
 import { createServer } from 'vite'
 
 import { formatCount, formatFilepath, formatNumber, logger } from '@/logger'
@@ -62,7 +63,7 @@ export const DevCommand = command<unknown, DevArgs>({
     const server = await createServer({
       appType: 'spa',
       configFile: false,
-      plugins: [inspectData({ config: argv.config, cwd, state })],
+      plugins: [serveBuiltAppAssets(), inspectData({ config: argv.config, cwd, state })],
       root: resolveAppRoot(),
       server: {
         host: argv.host,
@@ -92,6 +93,28 @@ export const DevCommand = command<unknown, DevArgs>({
 
 function coerceHost(value: string | undefined) {
   return value === '' ? true : value
+}
+
+function serveBuiltAppAssets(): Plugin {
+  return {
+    name: 'oxlint-config-inspector-built-app-assets',
+    enforce: 'pre',
+    configureServer(server) {
+      const appRoot = resolveAppRoot()
+      const assetsDir = path.join(appRoot, 'assets')
+
+      const serveAssets = sirv(assetsDir, {
+        dev: true,
+        etag: true,
+        maxAge: 0,
+      })
+
+      server.middlewares.use('/assets', (request, response, next) => {
+        response.setHeader('Cache-Control', 'no-store')
+        serveAssets(request, response, next)
+      })
+    },
+  }
 }
 
 function inspectData(options: Pick<DevArgs, 'config' | 'cwd'> & { state: DevServerState }): Plugin {
