@@ -1,12 +1,11 @@
+import type { Jiti } from 'jiti'
 import type { ExternalPluginEntry } from 'oxlint'
 import type { LoadedOxlintConfig } from './config'
 
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-type PluginModule = {
-  default?: unknown
-}
+import { createJiti } from 'jiti'
 
 type JsPlugin = {
   meta?: {
@@ -72,10 +71,11 @@ type PluginLoadResult = PluginInfo | PluginLoadError
  */
 export async function getPlugins(config: LoadedOxlintConfig): Promise<LoadedPlugins> {
   const entries = getPluginEntries(config)
+  const pluginLoader = createJiti(config.filepath)
   const results = await Promise.all(
     entries.map(async (entry) => {
       try {
-        return await loadPlugin(entry, config.filepath)
+        return await loadPlugin(entry, config.filepath, pluginLoader)
       } catch (error) {
         return createPluginLoadError(entry, error)
       }
@@ -157,10 +157,10 @@ function isPluginLoadError(result: PluginLoadResult): result is PluginLoadError 
 /**
  * Resolves, imports, and extracts rule information from a single JS plugin entry.
  */
-async function loadPlugin(entry: ExternalPluginEntry, configFilepath: string): Promise<PluginInfo> {
+async function loadPlugin(entry: ExternalPluginEntry, configFilepath: string, pluginLoader: Jiti): Promise<PluginInfo> {
   const specifier = getPluginSpecifier(entry)
-  const resolvedPath = resolvePluginPath(specifier, configFilepath)
-  const plugin = await importPlugin(resolvedPath)
+  const resolvedPath = resolvePluginPath(specifier, configFilepath, pluginLoader)
+  const plugin = await importPlugin(resolvedPath, pluginLoader)
   const name = getPluginName(entry, specifier, plugin)
   const rules = getPluginRules(name, plugin)
 
@@ -194,18 +194,16 @@ function getPluginSpecifier(entry: ExternalPluginEntry) {
  * @param configFilepath - Absolute path to the config file declaring the plugin.
  * @returns The absolute file path to the plugin module.
  */
-function resolvePluginPath(specifier: string, configFilepath: string) {
+function resolvePluginPath(specifier: string, configFilepath: string, pluginLoader: Jiti) {
   if (specifier.startsWith('file:')) {
     return fileURLToPath(specifier)
   }
 
-  if (isPathSpecifier(specifier)) {
-    return path.resolve(path.dirname(configFilepath), specifier)
-  }
+  const resolved = pluginLoader.esmResolve(specifier, {
+    parentURL: pathToFileURL(configFilepath).href,
+  })
 
-  const resolvedUrl = import.meta.resolve(specifier, pathToFileURL(configFilepath).href)
-
-  return fileURLToPath(resolvedUrl)
+  return resolved.startsWith('file:') ? fileURLToPath(resolved) : resolved
 }
 
 /**
@@ -213,9 +211,8 @@ function resolvePluginPath(specifier: string, configFilepath: string) {
  *
  * @throws {TypeError} If the imported module is not a valid plugin object.
  */
-async function importPlugin(resolvedPath: string): Promise<JsPlugin> {
-  const namespace = (await import(pathToFileURL(resolvedPath).href)) as PluginModule
-  const plugin = namespace.default ?? namespace
+async function importPlugin(resolvedPath: string, pluginLoader: Jiti): Promise<JsPlugin> {
+  const plugin = await pluginLoader.import(pathToFileURL(resolvedPath).href, { default: true })
 
   if (!isJsPlugin(plugin)) {
     throw new TypeError(`Invalid Oxlint JS plugin: ${resolvedPath}`)
