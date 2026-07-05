@@ -116,8 +116,7 @@ See the [changelog format docs](https://tegami.fuma-nama.dev/changelog) for deta
 ```md
 ---
 packages:
-  group:oxlint-config-inspector:
-    type: patch
+  npm:@oxlint-config-inspector/core: patch
 ---
 
 ## Fix button hover state
