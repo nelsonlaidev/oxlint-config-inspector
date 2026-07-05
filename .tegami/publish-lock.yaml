@@ -1,0 +1,24 @@
+core:changelogs:
+  - content: "---\npackages:\n  group:inspector:\n    type: major\n---\n\n## Initial Beta Release\n"
+    filename: 2026-07-04-mr666nqk.md
+    v: 0.0.0
+core:packages:
+  - id: npm:@oxlint-config-inspector/root
+    updated: false
+  - id: npm:@oxlint-config-inspector/app
+    updated: false
+  - changelogIds:
+      - 2026-07-04-mr666nqk.md
+    id: npm:oxlint-config-inspector
+    updated: true
+  - changelogIds:
+      - 2026-07-04-mr666nqk.md
+    id: npm:@oxlint-config-inspector/core
+    updated: true
+npm:packages:
+  - id: npm:@oxlint-config-inspector/root
+  - id: npm:@oxlint-config-inspector/app
+  - distTag: beta
+    id: npm:oxlint-config-inspector
+  - distTag: beta
+    id: npm:@oxlint-config-inspector/core
