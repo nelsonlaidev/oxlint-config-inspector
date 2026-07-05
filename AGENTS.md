@@ -45,7 +45,11 @@ node packages/cli/bin/oxlint-config-inspector.mjs inspect --output packages/app/
 
 ## Testing
 
-No test framework. Manual verification fixtures live in `.try/` with various Oxlint config scenarios. Each fixture has a config file and a `src/file.js` to lint against.
+Tests run via Vitest in `packages/core` and `packages/cli`.
+
+```
+pnpm test
+```
 
 ## TSDoc
 
