@@ -37,4 +37,4 @@ jobs:
           TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
       - name: Publish packages
-        run: pnpm dlx pkg-pr-new publish --commentWithSha './packages/cli' './packages/core'
+        run: pnpm dlx pkg-pr-new publish --pnpm --commentWithSha './packages/cli' './packages/core'
