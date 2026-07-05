@@ -105,7 +105,7 @@ export type PluginRuleInfo = {
 
 This repository uses [Tegami](https://tegami.fuma-nama.dev) for versioning and publishing.
 
-## Write changelog files
+### Write changelog files
 
 Create pending changelog files under `.tegami/` as `YYYY-MM-DD-{hash}.md`.
 
@@ -116,10 +116,11 @@ See the [changelog format docs](https://tegami.fuma-nama.dev/changelog) for deta
 ```md
 ---
 packages:
-  'npm:@acme/ui': patch
+  group:oxlint-config-inspector:
+    type: patch
 ---
 
-### Fix button hover state
+## Fix button hover state
 
 The hover color now matches the design system.
 ```
