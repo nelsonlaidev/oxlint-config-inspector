@@ -22,6 +22,7 @@ type DevArgs = {
   config?: string
   cwd: string
   host?: string | boolean
+  open?: boolean
   port: number
 }
 
@@ -50,6 +51,11 @@ export const DevCommand = command<unknown, DevArgs>({
         requiresArg: false,
         type: 'string',
       })
+      .option('open', {
+        alias: 'o',
+        describe: 'Open the development server in the browser',
+        type: 'boolean',
+      })
       .option('port', {
         describe: 'Port to run the development server on',
         type: 'number',
@@ -67,6 +73,7 @@ export const DevCommand = command<unknown, DevArgs>({
       root: resolveAppRoot(),
       server: {
         host: argv.host,
+        open: argv.open,
         port: argv.port,
       },
     })

@@ -76,6 +76,7 @@ Options:
 - `--config, -c`: path to an Oxlint config file.
 - `--cwd`: directory to search from. Defaults to the current working directory.
 - `--host`: host to expose the dev server on.
+- `--open, -o`: open the dev server in the browser on startup.
 - `--port`: port to run the dev server on. Defaults to `3000`.
 
 ### `build`

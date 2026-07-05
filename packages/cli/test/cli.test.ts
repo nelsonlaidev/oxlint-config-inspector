@@ -151,6 +151,7 @@ describe('inspect binary', () => {
     expect(stdout).toContain('Run the development server')
     expect(stdout).toContain('--config')
     expect(stdout).toContain('--cwd')
+    expect(stdout).toContain('--open')
     expect(stdout).toContain('--port')
   })
 
