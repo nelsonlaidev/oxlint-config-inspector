@@ -20,3 +20,6 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - tegami@1.2.0
+
+patchedDependencies:
+  tegami: patches/tegami.patch

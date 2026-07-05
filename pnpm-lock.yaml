@@ -20,6 +20,9 @@ catalogs:
       specifier: 4.1.9
       version: 4.1.9
 
+patchedDependencies:
+  tegami: 8df59f72d2be5c33d5b98bba7b0b54154b3e591a56a5206bca2f12b7a5988bbb
+
 importers:
 
   .:
@@ -53,7 +56,7 @@ importers:
         version: 0.24.0
       tegami:
         specifier: 1.2.0
-        version: 1.2.0
+        version: 1.2.0(patch_hash=8df59f72d2be5c33d5b98bba7b0b54154b3e591a56a5206bca2f12b7a5988bbb)
       tinyexec:
         specifier: 1.2.4
         version: 1.2.4
@@ -6390,7 +6393,7 @@ snapshots:
 
   tapable@2.3.3: {}
 
-  tegami@1.2.0:
+  tegami@1.2.0(patch_hash=8df59f72d2be5c33d5b98bba7b0b54154b3e591a56a5206bca2f12b7a5988bbb):
     dependencies:
       '@clack/prompts': 1.6.0
       '@rainbowatcher/toml-edit-js': 0.6.5
