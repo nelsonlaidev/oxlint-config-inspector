@@ -11,8 +11,8 @@
     "format:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "test": "turbo run test",
-    "test:watch": "turbo run test:watch",
+    "test": "turbo test",
+    "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck",
     "tegami": "node scripts/tegami.ts"
   },
