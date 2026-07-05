@@ -143,8 +143,6 @@ export type InspectedRule = {
   replacedBy: string[]
   /** Canonical rule ID used by the inspector. */
   ruleId: string
-  /** Lowercase text index used by inspector search. */
-  searchText: string
   /** Unique normalized severities present on this rule, ordered as error, warn, then off. */
   severityStates: InspectedRuleUsageSeverity[]
   /** ESLint-compatible rule type, when available. */
@@ -275,15 +273,10 @@ export function inspectLoadedConfig(
       const usage = createRuleUsageSummary(rule, overrideSeveritiesByRuleId.get(rule.ruleId) ?? [])
 
       const aliases = [...(catalog.aliasesByRuleId.get(rule.ruleId) ?? [])]
-      const inspectedRule = {
+      return {
         ...rule,
         ...usage,
         aliases,
-      }
-
-      return {
-        ...inspectedRule,
-        searchText: createRuleSearchText(inspectedRule),
       }
     })
     .toSorted((left, right) => left.ruleId.localeCompare(right.ruleId))
@@ -382,23 +375,6 @@ function createOverrideSeveritiesByRuleId(overrideGroups: InspectedOverrideGroup
   return severitiesByRuleId
 }
 
-function createRuleSearchText(rule: InspectedRule) {
-  return [
-    rule.ruleId,
-    rule.name,
-    rule.pluginName,
-    rule.category,
-    rule.source,
-    rule.description,
-    rule.ruleType,
-    ...rule.aliases,
-    ...rule.replacedBy,
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase()
-}
-
 function createInspectedPlugins(plugins: PluginInfo[], rules: InspectedRule[]): InspectedPlugin[] {
   const inspectedPlugins = new Map<string, InspectedPlugin>()
 
@@ -486,7 +462,6 @@ function createRuleCatalog(
       ...createEmptyRuleUsage(isPluginEnabled && useCategorySeverity),
       pluginName,
       ruleId,
-      searchText: '',
       source: 'builtin',
       typeAware: rule.type_aware,
     })
@@ -507,7 +482,6 @@ function createRuleCatalog(
         ...createEmptyRuleUsage(false),
         pluginName: plugin.name,
         ruleId: rule.ruleId,
-        searchText: '',
         source: 'js-plugin',
       })
 
@@ -552,7 +526,6 @@ function getOrCreateUnknownRule(catalog: RuleCatalog, normalizedRuleId: string, 
     recommended: false,
     replacedBy: [],
     ruleId: configuredRuleId,
-    searchText: '',
     source: 'unknown',
   }
 

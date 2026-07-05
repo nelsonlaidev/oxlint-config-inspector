@@ -142,8 +142,6 @@ describe('inspectLoadedConfig', () => {
       },
       used: true,
     })
-    expect(noDebugger?.searchText).toContain('no-debugger')
-
     const tsRule = result.rules.find((rule) => rule.ruleId === 'typescript/no-unused-vars')
     expect(tsRule).toMatchObject({
       aliases: [
