@@ -1,7 +1,7 @@
 import type { InspectConfigResult } from '@oxlint-config-inspector/core'
 
 import { execFile } from 'node:child_process'
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { cp, mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -130,7 +130,7 @@ describe('inspect binary', () => {
     const result = parseInspectJson(output)
 
     expect(stderr).toBe('')
-    expect(stdout).toBe('')
+    expect(stdout).toContain(`Wrote inspect result to ${outputPath}`)
     expect(output).not.toContain('\n  "')
     expect(relativePath(result.configFilepath)).toBe('oxlint-fixture.json')
     expect(result.configFiles.map(relativePath).toSorted()).toEqual(['base.json', 'oxlint-fixture.json'])
@@ -166,17 +166,22 @@ describe('inspect binary', () => {
   })
 
   test('builds a static inspector site', async () => {
-    const outputDirectory = await mkdtemp(path.join(tmpdir(), 'oxlint-config-inspector-site-'))
-    temporaryDirectories.push(outputDirectory)
+    const temporaryCwd = await mkdtemp(path.join(tmpdir(), 'oxlint-config-inspector-cwd-'))
+    temporaryDirectories.push(temporaryCwd)
+
+    await cp(fixtureCwd, temporaryCwd, { recursive: true })
+
+    const outputDirectory = path.join(temporaryCwd, 'dist/oxlint-config-inspector')
+    const displayOutputDirectory = 'dist/oxlint-config-inspector'
 
     const { stderr, stdout } = await runCli([
       'build',
       '--config',
       'oxlint-fixture.json',
       '--cwd',
-      fixtureCwd,
+      temporaryCwd,
       '--out-dir',
-      outputDirectory,
+      displayOutputDirectory,
       '--pretty',
       'false',
     ])
@@ -185,10 +190,19 @@ describe('inspect binary', () => {
     const result = parseInspectJson(dataJson)
 
     expect(stderr).toBe('')
-    expect(stdout).toContain(`Built inspector site to ${outputDirectory}`)
+    expect(stdout).toContain('Building static Oxlint config inspector...')
+    expect(stdout).toContain('Reading Oxlint config from oxlint-fixture.json')
+    expect(stdout).toContain('Loaded with 2 config files and')
+    expect(stdout).toContain(`Copying inspector app to ${displayOutputDirectory}`)
+    expect(stdout).toContain(`Writing inspect data to ${displayOutputDirectory}/data.json`)
+    expect(stdout).toContain(`Built to ${displayOutputDirectory}`)
+    expect(stdout).toContain(`Serve with \`npx serve ${displayOutputDirectory}\``)
     expect(indexHtml).toContain('<div id="root"></div>')
     expect(dataJson).not.toContain('\n  "')
-    expect(relativePath(result.configFilepath)).toBe('oxlint-fixture.json')
-    expect(result.configFiles.map(relativePath).toSorted()).toEqual(['base.json', 'oxlint-fixture.json'])
+    expect(path.relative(temporaryCwd, result.configFilepath)).toBe('oxlint-fixture.json')
+    expect(result.configFiles.map((filepath) => path.relative(temporaryCwd, filepath)).toSorted()).toEqual([
+      'base.json',
+      'oxlint-fixture.json',
+    ])
   })
 })

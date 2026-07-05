@@ -3,6 +3,14 @@ import path from 'node:path'
 
 import { inspectConfig } from '@oxlint-config-inspector/core'
 
+import {
+  formatCommand,
+  formatDisplayPath,
+  formatFilepath,
+  formatHighlightedCount,
+  formatSuccessWord,
+  logger,
+} from '@/logger'
 import { resolveAppRoot } from '@/utils'
 
 import { command } from './command'
@@ -44,6 +52,15 @@ export const BuildCommand = command<unknown, BuildArgs>({
   async handler(argv) {
     const cwd = path.resolve(argv.cwd)
     const outDir = path.resolve(cwd, argv.outDir)
+    const displayOutDir = formatFilepath(cwd, outDir)
+    const serveCommand = `npx serve ${displayOutDir}`
+    const configFilepath = argv.config ? path.resolve(cwd, argv.config) : undefined
+
+    logger.info('Building static Oxlint config inspector...')
+
+    if (configFilepath) {
+      logger.info(`Reading Oxlint config from ${formatDisplayPath(cwd, configFilepath)}`)
+    }
 
     const result = await inspectConfig({ configFile: argv.config, cwd })
 
@@ -51,11 +68,27 @@ export const BuildCommand = command<unknown, BuildArgs>({
       throw new Error('No Oxlint config found')
     }
 
+    if (!configFilepath) {
+      logger.info(`Read Oxlint config from ${formatDisplayPath(cwd, result.configFilepath)}`)
+    }
+
+    logger.success(
+      `Loaded with ${formatHighlightedCount(result.configFiles.length, 'config file')} and ${formatHighlightedCount(
+        result.stats.totalRules,
+        'rule',
+      )}`,
+    )
+    logger.info(`Copying inspector app to ${formatDisplayPath(cwd, outDir)}`)
     await rm(outDir, { force: true, recursive: true })
     await mkdir(outDir, { recursive: true })
     await cp(resolveAppRoot(), outDir, { force: true, recursive: true })
-    await writeFile(path.join(outDir, 'data.json'), `${JSON.stringify(result, null, argv.pretty ? 2 : 0)}\n`)
 
-    process.stdout.write(`Built inspector site to ${outDir}\n`)
+    const dataPath = path.join(outDir, 'data.json')
+
+    logger.info(`Writing inspect data to ${formatDisplayPath(cwd, dataPath)}`)
+    await writeFile(dataPath, `${JSON.stringify(result, null, argv.pretty ? 2 : 0)}\n`)
+
+    logger.success(`${formatSuccessWord('Built')} to ${formatDisplayPath(cwd, outDir)}`)
+    logger.info(`Serve with ${formatCommand(serveCommand)}`)
   },
 })

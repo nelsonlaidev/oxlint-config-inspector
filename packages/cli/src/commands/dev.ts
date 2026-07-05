@@ -10,7 +10,7 @@ import colors from 'picocolors'
 import sirv from 'sirv'
 import { createServer } from 'vite'
 
-import { formatCount, formatFilepath, formatNumber, logger } from '@/logger'
+import { devLogger, formatCount, formatFilepath, formatNumber } from '@/logger'
 
 import pkgJson from '../../package.json'
 import { resolveAppRoot } from '../utils'
@@ -77,17 +77,19 @@ export const DevCommand = command<unknown, DevArgs>({
 
     const versionString = `${colors.bold('Oxlint Config Inspector')} v${pkgJson.version}`
 
-    logger.info(`\n  ${colors.green(versionString)}\n`)
-    logger.info(
+    process.stdout.write(`\n  ${colors.green(versionString)}\n\n`)
+    process.stdout.write(
       `  ${colors.green('➜')}  ${colors.bold('Config')}:  ${configFilepath ? formatFilepath(cwd, configFilepath) : 'not found'}`,
     )
-    logger.info(
+    process.stdout.write('\n')
+    process.stdout.write(
       `  ${colors.green('➜')}  ${colors.bold('Rules')}:   ${state.result ? formatNumber(state.result.stats.totalRules) : '-'}`,
     )
+    process.stdout.write('\n')
 
     server.printUrls()
     server.bindCLIShortcuts({ print: true })
-    logger.info('')
+    process.stdout.write('\n')
   },
 })
 
@@ -278,19 +280,18 @@ function inspectData(options: Pick<DevArgs, 'config' | 'cwd'> & { state: DevServ
 }
 
 function logReloadStart(cwd: string, filepath: string) {
-  logger.info(`${formatFilepath(cwd, filepath)} changed`, { timestamp: true })
+  devLogger.info(`${formatFilepath(cwd, filepath)} changed`)
 }
 
 function logReloadSuccess(result: InspectConfigResult, duration: number) {
-  logger.info(
+  devLogger.info(
     `reloaded in ${Math.round(duration)}ms (${formatCount(result.configFiles.length, 'config')}, ${formatCount(
       result.stats.totalRules,
       'rule',
     )})`,
-    { timestamp: true },
   )
 }
 
 function logReloadFailure(error: unknown) {
-  logger.error(`failed to reload\n\n${error instanceof Error ? error.message : String(error)}\n`, { timestamp: true })
+  devLogger.error(`failed to reload\n\n${error instanceof Error ? error.message : String(error)}\n`)
 }

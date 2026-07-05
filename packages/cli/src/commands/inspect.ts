@@ -3,6 +3,8 @@ import path from 'node:path'
 
 import { inspectConfig } from '@oxlint-config-inspector/core'
 
+import { formatDisplayPath, logger } from '@/logger'
+
 import { command } from './command'
 
 type InspectArgs = {
@@ -39,9 +41,10 @@ export const InspectCommand = command<unknown, InspectArgs>({
       })
   },
   async handler(argv) {
+    const cwd = path.resolve(argv.cwd)
     const result = await inspectConfig({
       configFile: argv.config,
-      cwd: argv.cwd,
+      cwd,
     })
 
     if (!result) {
@@ -51,9 +54,10 @@ export const InspectCommand = command<unknown, InspectArgs>({
     const json = `${JSON.stringify(result, null, argv.pretty ? 2 : 0)}\n`
 
     if (argv.output) {
-      const outputPath = path.resolve(argv.cwd, argv.output)
+      const outputPath = path.resolve(cwd, argv.output)
       await mkdir(path.dirname(outputPath), { recursive: true })
       await writeFile(outputPath, json)
+      logger.info(`Wrote inspect result to ${formatDisplayPath(cwd, outputPath)}`)
       return
     }
 
