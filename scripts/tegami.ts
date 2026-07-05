@@ -37,16 +37,18 @@ const paper = tegami({
     },
   },
   groups: {
-    inspector: {
+    'oxlint-config-inspector': {
       prerelease: 'beta',
+      syncBump: true,
+      syncGitTag: true,
     },
   },
   packages: {
     'oxlint-config-inspector': {
-      group: 'inspector',
+      group: 'oxlint-config-inspector',
     },
     '@oxlint-config-inspector/core': {
-      group: 'inspector',
+      group: 'oxlint-config-inspector',
     },
   },
 })
