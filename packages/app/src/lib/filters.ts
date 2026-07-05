@@ -1,5 +1,8 @@
 import type { InspectedRule } from '@oxlint-config-inspector/core'
+import type { IFuseOptions } from 'fuse.js'
 import type { RulePluginFilter, RuleStateFilter, RuleUsageFilter } from '../types'
+
+import Fuse from 'fuse.js'
 
 export const RULE_STATE_FILTERS: RuleStateFilter[] = ['all', 'active', 'recommended', 'fixable', 'deprecated']
 export const RULE_USAGE_FILTERS: RuleUsageFilter[] = [
@@ -13,6 +16,22 @@ export const RULE_USAGE_FILTERS: RuleUsageFilter[] = [
   'off-only',
 ]
 
+const RULE_SEARCH_OPTIONS: IFuseOptions<InspectedRule> = {
+  ignoreLocation: true,
+  keys: [
+    { name: 'ruleId', weight: 0.45 },
+    { name: 'aliases', weight: 0.25 },
+    { name: 'name', weight: 0.15 },
+    { name: 'pluginName', weight: 0.1 },
+    { name: 'category', weight: 0.1 },
+    { name: 'description', weight: 0.05 },
+    { name: 'source', weight: 0.05 },
+    { name: 'ruleType', weight: 0.05 },
+    { name: 'replacedBy', weight: 0.05 },
+  ],
+  threshold: 0.4,
+}
+
 export function filterRules(
   rules: InspectedRule[],
   filters: {
@@ -25,25 +44,38 @@ export function filterRules(
   const { pluginFilter, query, stateFilter, usageFilter } = filters
   const normalizedQuery = query.trim().toLowerCase()
 
-  return rules.filter((rule) => {
-    if (normalizedQuery.length > 0 && !rule.searchText.includes(normalizedQuery)) {
-      return false
-    }
+  const filteredRules = rules.filter((rule) => matchesRuleFilters(rule, { pluginFilter, stateFilter, usageFilter }))
 
-    if (pluginFilter !== 'all' && rule.pluginName !== pluginFilter) {
-      return false
-    }
+  if (normalizedQuery.length === 0) {
+    return filteredRules
+  }
 
-    if (!matchesUsageFilter(rule, usageFilter)) {
-      return false
-    }
+  return new Fuse(filteredRules, RULE_SEARCH_OPTIONS).search(normalizedQuery).map((result) => result.item)
+}
 
-    if (!matchesStateFilter(rule, stateFilter)) {
-      return false
-    }
+function matchesRuleFilters(
+  rule: InspectedRule,
+  filters: {
+    pluginFilter: RulePluginFilter
+    stateFilter: RuleStateFilter
+    usageFilter: RuleUsageFilter
+  },
+) {
+  const { pluginFilter, stateFilter, usageFilter } = filters
 
-    return true
-  })
+  if (pluginFilter !== 'all' && rule.pluginName !== pluginFilter) {
+    return false
+  }
+
+  if (!matchesUsageFilter(rule, usageFilter)) {
+    return false
+  }
+
+  if (!matchesStateFilter(rule, stateFilter)) {
+    return false
+  }
+
+  return true
 }
 
 function matchesUsageFilter(rule: InspectedRule, filter: RuleUsageFilter) {
