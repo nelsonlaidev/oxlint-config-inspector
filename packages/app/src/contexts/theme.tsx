@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react'
+import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type Theme = 'dark' | 'light' | 'system'
 type ResolvedTheme = 'dark' | 'light'
@@ -12,6 +12,7 @@ type ThemeProviderProps = {
 }
 
 type ThemeContextValue = {
+  resolvedTheme: ResolvedTheme
   setTheme: (theme: Theme) => void
   theme: Theme
 }
@@ -38,6 +39,24 @@ function getSystemTheme(): ResolvedTheme {
   return 'light'
 }
 
+function disableTransitionsTemporarily() {
+  const style = document.createElement('style')
+
+  style.append(
+    document.createTextNode('*,*::before,*::after{-webkit-transition:none!important;transition:none!important}'),
+  )
+  document.head.append(style)
+
+  return () => {
+    globalThis.getComputedStyle(document.body).getPropertyValue('opacity')
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        style.remove()
+      })
+    })
+  }
+}
+
 export const useTheme = () => {
   const context = use(ThemeContext)
 
@@ -60,6 +79,9 @@ export function ThemeProvider(props: ThemeProviderProps) {
 
     return defaultTheme
   })
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(() => getSystemTheme())
+  const resolvedTheme = themeState === 'system' ? systemTheme : themeState
+  const hasAppliedThemeRef = useRef(false)
 
   const setTheme = useCallback(
     (nextTheme: Theme) => {
@@ -70,21 +92,19 @@ export function ThemeProvider(props: ThemeProviderProps) {
   )
 
   useEffect(() => {
-    const resolvedTheme = themeState === 'system' ? getSystemTheme() : themeState
     const root = document.documentElement
+    const restoreTransitions = hasAppliedThemeRef.current ? disableTransitionsTemporarily() : undefined
 
     root.classList.remove('light', 'dark')
     root.classList.add(resolvedTheme)
+    hasAppliedThemeRef.current = true
+    restoreTransitions?.()
+  }, [resolvedTheme])
 
-    if (themeState !== 'system') {
-      return
-    }
-
+  useEffect(() => {
     const mediaQuery = globalThis.matchMedia(COLOR_SCHEME_QUERY)
     const handleChange = () => {
-      const newResolvedTheme = getSystemTheme()
-      root.classList.remove('light', 'dark')
-      root.classList.add(newResolvedTheme)
+      setSystemTheme(getSystemTheme())
     }
 
     mediaQuery.addEventListener('change', handleChange)
@@ -92,14 +112,15 @@ export function ThemeProvider(props: ThemeProviderProps) {
     return () => {
       mediaQuery.removeEventListener('change', handleChange)
     }
-  }, [themeState])
+  }, [])
 
   const value = useMemo(
     () => ({
+      resolvedTheme,
       setTheme,
       theme: themeState,
     }),
-    [setTheme, themeState],
+    [resolvedTheme, setTheme, themeState],
   )
 
   return <ThemeContext value={value}>{children}</ThemeContext>
