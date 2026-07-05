@@ -26,6 +26,13 @@ const paper = tegami({
             title: version ? `chore: release ${version}` : 'chore: release',
           }
         },
+        commit({ type }) {
+          if (type === 'version-packages') {
+            return { title: 'chore: version packages' }
+          }
+
+          return { title: 'chore: update publish lockfile' }
+        },
       },
     }),
   ],
