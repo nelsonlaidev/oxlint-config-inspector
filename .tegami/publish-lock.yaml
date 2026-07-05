@@ -1,5 +1,5 @@
 core:changelogs:
-  - content: "---\npackages:\n  group:oxlint-config-inspector:\n    type: major\n---\n\n## Initial Beta Release\n"
+  - content: "---\npackages:\n  group:oxlint-config-inspector:\n    type: major\n---\n\n## Initial beta release\n"
     filename: 2026-07-04-mr666nqk.md
     v: 0.0.0
 core:packages:
