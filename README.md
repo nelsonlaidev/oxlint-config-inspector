@@ -113,6 +113,10 @@ node packages/cli/bin/oxlint-config-inspector.mjs inspect --output packages/app/
 pnpm dev
 ```
 
+## Credits
+
+Inspired by [ESLint Config Inspector](https://github.com/eslint/config-inspector).
+
 ## License
 
 [MIT](./LICENSE)
