@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type Theme = 'dark' | 'light' | 'system'
-type ResolvedTheme = 'dark' | 'light'
+export type ResolvedTheme = 'dark' | 'light'
 
 type ThemeProviderProps = {
   children: ReactNode
