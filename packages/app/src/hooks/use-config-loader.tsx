@@ -2,6 +2,7 @@ import type { InspectConfigResult } from '@oxlint-config-inspector/core'
 
 import { useEffect, useState } from 'react'
 
+import { resolveBaseUrlPath } from '@/lib/base-url'
 import { isInspectConfigResult } from '@/lib/config'
 
 export type ConfigLoadState =
@@ -27,7 +28,7 @@ export function useConfigLoader(options: ConfigLoaderOptions = {}) {
 
     async function loadData() {
       try {
-        const response = await fetch('/data.json', { cache: 'no-store' })
+        const response = await fetch(resolveBaseUrlPath('data.json'), { cache: 'no-store' })
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status} ${response.statusText}`)

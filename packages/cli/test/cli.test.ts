@@ -160,6 +160,7 @@ describe('inspect binary', () => {
 
     expect(stderr).toBe('')
     expect(stdout).toContain('Build a static inspector site')
+    expect(stdout).toContain('--base')
     expect(stdout).toContain('--config')
     expect(stdout).toContain('--cwd')
     expect(stdout).toContain('--out-dir')
@@ -205,5 +206,35 @@ describe('inspect binary', () => {
       'base.json',
       'oxlint-fixture.json',
     ])
+  })
+
+  test('builds a static inspector site with a base path', async () => {
+    const temporaryCwd = await mkdtemp(path.join(tmpdir(), 'oxlint-config-inspector-cwd-'))
+    temporaryDirectories.push(temporaryCwd)
+
+    await cp(fixtureCwd, temporaryCwd, { recursive: true })
+
+    const outputDirectory = path.join(temporaryCwd, 'dist/oxlint-config-inspector')
+
+    const { stderr } = await runCli([
+      'build',
+      '--config',
+      'oxlint-fixture.json',
+      '--cwd',
+      temporaryCwd,
+      '--out-dir',
+      'dist/oxlint-config-inspector',
+      '--base',
+      '/oxlint-inspector',
+    ])
+    const indexHtml = await readFile(path.join(outputDirectory, 'index.html'), 'utf-8')
+
+    expect(stderr).toBe('')
+    expect(indexHtml).toContain('globalThis.__OXLINT_CONFIG_INSPECTOR_BASE_PATH__="/oxlint-inspector/"')
+    expect(indexHtml).toContain('href="/oxlint-inspector/favicon.svg"')
+    expect(indexHtml).toContain('src="/oxlint-inspector/assets/')
+    expect(indexHtml).toContain('href="/oxlint-inspector/assets/')
+    expect(indexHtml).not.toContain('href="/favicon.svg"')
+    expect(indexHtml).not.toContain('src="/assets/')
   })
 })

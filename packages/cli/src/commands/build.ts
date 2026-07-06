@@ -1,4 +1,4 @@
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
 import { inspectConfig } from '@oxlint-config-inspector/core'
@@ -16,6 +16,7 @@ import { resolveAppRoot } from '@/utils'
 import { command } from './command'
 
 type BuildArgs = {
+  base?: string
   config?: string
   cwd: string
   'out-dir': string
@@ -27,6 +28,10 @@ export const BuildCommand = command<unknown, BuildArgs>({
   describe: 'Build a static inspector site',
   builder(yargs) {
     return yargs
+      .option('base', {
+        describe: 'Base path to prepend to static asset and data URLs',
+        type: 'string',
+      })
       .option('config', {
         alias: 'c',
         describe: 'Path to an Oxlint config file',
@@ -55,6 +60,7 @@ export const BuildCommand = command<unknown, BuildArgs>({
     const displayOutDir = formatFilepath(cwd, outDir)
     const serveCommand = `npx serve ${displayOutDir}`
     const configFilepath = argv.config ? path.resolve(cwd, argv.config) : undefined
+    const basePath = resolveBasePath(argv)
 
     logger.info('Building static Oxlint config inspector...')
 
@@ -82,6 +88,7 @@ export const BuildCommand = command<unknown, BuildArgs>({
     await rm(outDir, { force: true, recursive: true })
     await mkdir(outDir, { recursive: true })
     await cp(resolveAppRoot(), outDir, { force: true, recursive: true })
+    await writeIndexHtmlBasePath(outDir, basePath)
 
     const dataPath = path.join(outDir, 'data.json')
 
@@ -92,3 +99,41 @@ export const BuildCommand = command<unknown, BuildArgs>({
     logger.info(`Serve with ${formatCommand(serveCommand)}`)
   },
 })
+
+function resolveBasePath(argv: Pick<BuildArgs, 'base'>) {
+  return normalizeBasePath(argv.base)
+}
+
+function normalizeBasePath(basePath: string | undefined) {
+  const trimmedBasePath = basePath?.trim()
+
+  if (!trimmedBasePath || trimmedBasePath === '/') {
+    return '/'
+  }
+
+  if (/^[a-z][\d+.a-z-]*:/i.test(trimmedBasePath) || trimmedBasePath.startsWith('//')) {
+    throw new Error('--base must be a URL path, such as /oxlint-inspector/')
+  }
+
+  const normalizedBasePath = `/${trimmedBasePath.replace(/^\/+/, '')}`
+
+  return normalizedBasePath.endsWith('/') ? normalizedBasePath : `${normalizedBasePath}/`
+}
+
+async function writeIndexHtmlBasePath(outDir: string, basePath: string) {
+  if (basePath === '/') {
+    return
+  }
+
+  const indexHtmlPath = path.join(outDir, 'index.html')
+  const indexHtml = await readFile(indexHtmlPath, 'utf-8')
+
+  await writeFile(indexHtmlPath, applyIndexHtmlBasePath(indexHtml, basePath))
+}
+
+function applyIndexHtmlBasePath(indexHtml: string, basePath: string) {
+  const runtimeConfigScript = `    <script>globalThis.__OXLINT_CONFIG_INSPECTOR_BASE_PATH__=${JSON.stringify(basePath)}</script>\n`
+  const htmlWithRuntimeBasePath = indexHtml.replace('</head>', `${runtimeConfigScript}  </head>`)
+
+  return htmlWithRuntimeBasePath.replaceAll(/\b(?:href|src)="\/(?!\/)/g, (match) => `${match.slice(0, -1)}${basePath}`)
+}
