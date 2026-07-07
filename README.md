@@ -1,3 +1,5 @@
+<img src="./packages/app/public/favicon.svg" width="100" height="100" alt="Oxlint Config Inspector" />
+
 # Oxlint Config Inspector
 
 [![Version](https://img.shields.io/npm/v/oxlint-config-inspector?style=flat&colorA=333333&colorB=000000)](https://www.npmjs.com/package/oxlint-config-inspector)
