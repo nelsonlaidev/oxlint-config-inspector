@@ -45,7 +45,6 @@ const paper = tegami({
   },
   groups: {
     'oxlint-config-inspector': {
-      prerelease: 'beta',
       syncBump: true,
       syncGitTag: true,
     },
