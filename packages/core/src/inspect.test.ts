@@ -43,6 +43,15 @@ const config: LoadedOxlintConfig = {
 
 const builtinRules: RuleInfo[] = [
   {
+    category: 'pedantic',
+    default: false,
+    docs_url: 'https://example.com/accessor-pairs',
+    fix: 'none',
+    scope: 'eslint',
+    type_aware: false,
+    value: 'accessor-pairs',
+  },
+  {
     category: 'correctness',
     default: true,
     docs_url: 'https://example.com/no-debugger',
@@ -131,6 +140,7 @@ describe('inspectLoadedConfig', () => {
         severity: 'off',
       },
       defaultSeverity: 'error',
+      description: 'Checks for usage of the debugger statement.',
       overloaded: true,
       pluginName: 'eslint',
       severityStates: ['error', 'off'],
@@ -141,6 +151,15 @@ describe('inspectLoadedConfig', () => {
         root: true,
       },
       used: true,
+    })
+    const accessorPairs = result.rules.find((rule) => rule.ruleId === 'eslint/accessor-pairs')
+    expect(accessorPairs).toMatchObject({
+      defaultOptions: {
+        enforceForClassMembers: true,
+        enforceForTSTypes: false,
+        getWithoutSet: false,
+        setWithoutGet: true,
+      },
     })
     const tsRule = result.rules.find((rule) => rule.ruleId === 'typescript/no-unused-vars')
     expect(tsRule).toMatchObject({
@@ -258,7 +277,7 @@ describe('inspectLoadedConfig', () => {
     expect(result.plugins).toEqual([
       {
         name: 'eslint',
-        ruleCount: 1,
+        ruleCount: 2,
         source: 'builtin',
       },
       {
@@ -281,7 +300,7 @@ describe('inspectLoadedConfig', () => {
     expect(result.rulePluginFilters).toEqual(['all', 'demo', 'eslint', 'react', 'typescript', 'unknown'])
     expect(result.unknownRules.map((rule) => rule.ruleId)).toEqual(['unknown/override-only', 'unknown/root-off'])
     expect(result.stats).toEqual({
-      builtinRules: 3,
+      builtinRules: 4,
       configuredRules: 4,
       deprecatedRules: 1,
       enabledRules: 5,
@@ -289,7 +308,7 @@ describe('inspectLoadedConfig', () => {
       jsPluginRules: 1,
       overrideRules: 3,
       recommendedRules: 2,
-      totalRules: 6,
+      totalRules: 7,
       unknownRules: 2,
     })
   })

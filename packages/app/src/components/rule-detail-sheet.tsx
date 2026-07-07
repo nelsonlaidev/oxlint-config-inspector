@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { ScrollArea } from './ui/scroll-area'
 import { Separator } from './ui/separator'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 
 export function RuleDetailSheet() {
@@ -89,21 +90,13 @@ export function RuleDetailSheet() {
                               <span>in {getUsageLocation(config)}</span>
                             </CardTitle>
                           </CardHeader>
-                          <CardContent className='space-y-2'>
+                          <CardContent className='space-y-2 [--key-value-grid-cols:3rem_1fr]'>
                             {config.files ? <KeyValue label='Files' value={config.files.join(', ')} /> : null}
                             {config.excludeFiles ? (
                               <KeyValue label='Exclude' value={config.excludeFiles.join(', ')} />
                             ) : null}
                             {config.files ? null : <MutedText>Applied generally for all files.</MutedText>}
-                            {config.options.length > 0 ? (
-                              <div className='space-y-2'>
-                                <div className='text-muted-foreground'>Rule options</div>
-                                {config.options.map((option, index) => (
-                                  // oxlint-disable-next-line @eslint-react/no-array-index-key
-                                  <JsonBlock key={index} value={option} />
-                                ))}
-                              </div>
-                            ) : null}
+                            <UsageOptionsTabs config={config} rule={rule} />
                           </CardContent>
                         </Card>
                       ))}
@@ -118,6 +111,47 @@ export function RuleDetailSheet() {
         ) : null}
       </SheetContent>
     </Sheet>
+  )
+}
+
+type RuleUsageConfig = ReturnType<typeof createRuleUsageConfigs>[number]
+
+type UsageOptionsTabsProps = {
+  config: RuleUsageConfig
+  rule: InspectedRule
+}
+
+function UsageOptionsTabs(props: UsageOptionsTabsProps) {
+  const { config, rule } = props
+  const hasDefaultOptions = hasRuleDefaultOptions(rule)
+  const hasConfiguredOptions = config.options.length > 0
+
+  if (!hasDefaultOptions && !hasConfiguredOptions) {
+    return null
+  }
+
+  return (
+    <Tabs className='gap-3' defaultValue={hasDefaultOptions ? 'default' : 'configured'}>
+      <TabsList variant='line'>
+        {hasConfiguredOptions ? <TabsTrigger value='configured'>Configured options</TabsTrigger> : null}
+        {hasDefaultOptions ? <TabsTrigger value='default'>Default options</TabsTrigger> : null}
+      </TabsList>
+
+      {hasConfiguredOptions ? (
+        <TabsContent className='space-y-2' value='configured'>
+          {config.options.map((option, index) => (
+            // oxlint-disable-next-line @eslint-react/no-array-index-key
+            <JsonBlock key={index} value={option} />
+          ))}
+        </TabsContent>
+      ) : null}
+
+      {hasDefaultOptions ? (
+        <TabsContent className='space-y-2' value='default'>
+          <JsonBlock value={rule.defaultOptions} />
+        </TabsContent>
+      ) : null}
+    </Tabs>
   )
 }
 
@@ -143,4 +177,8 @@ function getTypeAwareValue(rule: InspectedRule) {
   }
 
   return String(rule.typeAware)
+}
+
+function hasRuleDefaultOptions(rule: InspectedRule) {
+  return rule.defaultOptions !== undefined && Object.keys(rule.defaultOptions).length > 0
 }

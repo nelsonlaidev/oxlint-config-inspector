@@ -26,6 +26,7 @@
       "persistent": true
     },
     "typecheck": {},
+    "//#typecheck:root": {},
     "dev": {
       "cache": false,
       "persistent": true

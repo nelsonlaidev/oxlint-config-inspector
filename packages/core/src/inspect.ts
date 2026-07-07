@@ -5,9 +5,10 @@ import type { RuleInfo } from './types'
 
 import pkgJson from '../package.json'
 import { getConfig } from './config'
+import { builtinRuleDocs } from './generated/builtin-rule-docs'
 import { getPlugins } from './plugins'
 import { getOxlintRules } from './rules'
-import { getBoolean, getString, isRecord } from './utils'
+import { getBoolean, getBuiltinRuleId, getPluginName, getString, isRecord, SCOPE_CONFIG } from './utils'
 
 /**
  * Origin of a plugin entry discovered during config inspection.
@@ -117,6 +118,8 @@ export type InspectedRule = {
   configured?: InspectedRuleConfig
   /** Severity implied by the rule catalog before user configuration is applied. */
   defaultSeverity: RuleSeverity
+  /** Documented default option values, when available. */
+  defaultOptions?: Record<string, unknown>
   /** Human-readable rule description from ESLint-compatible rule metadata, when available. */
   description?: string
   /** Whether the rule is deprecated. */
@@ -657,6 +660,7 @@ function createSeverityStates(configs: InspectedRuleUsageSeverity[]) {
 }
 
 type NormalizedRuleMetadata = {
+  defaultOptions?: Record<string, unknown>
   deprecated: boolean
   description?: string
   docsUrl?: string
@@ -669,8 +673,12 @@ type NormalizedRuleMetadata = {
 }
 
 function createBuiltinRuleMetadata(rule: RuleInfo): NormalizedRuleMetadata {
+  const docMetadata = builtinRuleDocs[getBuiltinRuleId(rule)]
+
   return {
+    defaultOptions: docMetadata?.defaultOptions,
     deprecated: false,
+    description: docMetadata?.description,
     docsUrl: rule.docs_url,
     fixable: isBuiltinRuleFixable(rule.fix),
     hasSuggestions: hasBuiltinRuleSuggestions(rule.fix),
@@ -785,44 +793,6 @@ function addAliases(catalog: RuleCatalog, ruleId: string, aliases: string[]) {
       catalog.ruleIdByAlias.set(alias, ruleId)
     }
   }
-}
-
-function getBuiltinRuleId(rule: RuleInfo) {
-  return `${getPluginName(rule.scope)}/${rule.value}`
-}
-
-type ScopeConfig = {
-  /** Canonical plugin prefix used by Oxlint for this internal rule scope. */
-  pluginName: string
-  /** Additional accepted rule prefixes that should resolve to the same builtin rule. */
-  prefixAliases?: string[]
-}
-
-/**
- * Maps oxlint's internal rule scopes to user-facing plugin prefixes and known
- * compatibility aliases accepted by oxlint.
- *
- * This mirrors the plugin scope normalization in Oxlint so rules configured
- * with aliases like `@typescript-eslint/no-unused-vars`,
- * `react-hooks/rules-of-hooks`, or `deepscan/no-...` resolve to the same
- * builtin catalog entries as their canonical Oxlint rule IDs.
- *
- * @see https://github.com/oxc-project/oxc/blob/f30a64c2/crates/oxc_linter/src/config/plugins.rs#L150-L184
- */
-const SCOPE_CONFIG: Record<string, ScopeConfig> = {
-  import: { pluginName: 'import', prefixAliases: ['import-x'] },
-  jsx_a11y: { pluginName: 'jsx-a11y', prefixAliases: ['jsx_a11y', 'jsx-a11y-x', 'jsx_a11y-x'] },
-  oxc: { pluginName: 'oxc', prefixAliases: ['deepscan'] },
-  react: { pluginName: 'react', prefixAliases: ['react-hooks', 'react_hooks'] },
-  react_perf: { pluginName: 'react-perf', prefixAliases: ['react_perf'] },
-  typescript: {
-    pluginName: 'typescript',
-    prefixAliases: ['@typescript-eslint', 'typescript-eslint', 'typescript_eslint'],
-  },
-}
-
-function getPluginName(scope: string): string {
-  return SCOPE_CONFIG[scope]?.pluginName ?? scope
 }
 
 function createBareBuiltinRuleIds(rules: RuleInfo[]): Set<string> {

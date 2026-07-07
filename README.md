@@ -79,10 +79,6 @@ console.log(result.rules)
 - Node.js 22 or newer.
 - The `oxlint` binary should be available on `PATH` when you want builtin rule metadata. If it is missing, the inspector still runs, but builtin rules cannot be cataloged and an error is logged.
 
-## Limitations
-
-- Oxlint does not currently expose any API to retrieve rule descriptions for built-in plugins. The only alternatives are scraping the docs site or parsing the Rust source, neither of which is feasible. Builtin rules will therefore appear without descriptions.
-
 ## Packages
 
 | Package                         | Purpose                                                     |

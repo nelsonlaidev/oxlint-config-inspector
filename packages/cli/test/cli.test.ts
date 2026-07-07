@@ -24,6 +24,7 @@ async function runCli(args: string[]) {
       FORCE_COLOR: '0',
       NO_COLOR: '1',
     },
+    maxBuffer: 1024 * 1024 * 50,
   })
 }
 
