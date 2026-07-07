@@ -1,6 +1,6 @@
 {
   "name": "@oxlint-config-inspector/core",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Core config loading and inspection utilities for Oxlint Config Inspector.",
   "keywords": [
     "config-inspector",
