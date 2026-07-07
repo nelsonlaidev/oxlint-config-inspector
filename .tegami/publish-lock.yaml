@@ -1,20 +1,32 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Add dev server open flag\n\nThe `dev` command now supports `-o` and `--open` to open the inspector in the browser when the development server starts.\n"
+  - content: "---\npackages:\n  group:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n      - exit-prerelease(npm:@oxlint-config-inspector/core)\n---\n\n## Initial beta release\n"
+    filename: 2026-07-04-mr666nqk.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n---\n\n### Improve build output\n\nThe static inspector build command now reports each build step with shorter relative paths when possible. The inspect command also confirms where it writes results when using `--output`.\n"
+    filename: 2026-07-05-b7xq9m2r.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n---\n\n### Add favicon and logo to header\n\n- Added favicon link to `index.html` for the app\n- Added `Logo` component to the header alongside the app title\n"
+    filename: 2026-07-05-c0da41a4.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n---\n\n### Add dev server open flag\n\nThe `dev` command now supports `-o` and `--open` to open the inspector in the browser when the development server starts.\n"
     filename: 2026-07-05-open-dev-server.md
     v: 0.0.0
-  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Improve rule search\n\nRules can now be found with fuzzy search, so close matches and partial rule names are easier to discover.\n"
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n---\n\n### Improve rule search\n\nRules can now be found with fuzzy search, so close matches and partial rule names are easier to discover.\n"
     filename: 2026-07-05-r8k2m5qz.md
     v: 0.0.0
-  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Add syntax highlighting to JSON config view\n\nThe `JsonBlock` component now renders config values with syntax highlighting using Shiki. Code blocks use GitHub's light and dark themes to match the inspector's theme, and the new reusable `CodeBlock` component supports both JSON and JavaScript highlighting.\n"
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n---\n\n### Add theme switching\n\nThe config inspector now includes a header control for switching between light and dark themes, with transitions disabled during theme changes to avoid visual flicker.\n"
+    filename: 2026-07-05-vk8q2n4p.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n---\n\n### Add syntax highlighting to JSON config view\n\nThe `JsonBlock` component now renders config values with syntax highlighting using Shiki. Code blocks use GitHub's light and dark themes to match the inspector's theme, and the new reusable `CodeBlock` component supports both JSON and JavaScript highlighting.\n"
     filename: 2026-07-06-4c47fd52.md
     v: 0.0.0
-  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Add base path support for subdirectory deployment\n\nThe `build` command now supports `--base` to deploy the inspector under a subdirectory (e.g. `/oxlint-inspector/`). The CLI rewrites asset URLs in `index.html` and injects a runtime base path that the app reads via the new `resolveBaseUrlPath` utility, falling back to Vite's `import.meta.env.BASE_URL` in dev mode.\n"
+  - content: "---\npackages:\n  npm:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n---\n\n### Add base path support for subdirectory deployment\n\nThe `build` command now supports `--base` to deploy the inspector under a subdirectory (e.g. `/oxlint-inspector/`). The CLI rewrites asset URLs in `index.html` and injects a runtime base path that the app reads via the new `resolveBaseUrlPath` utility, falling back to Vite's `import.meta.env.BASE_URL` in dev mode.\n"
     filename: 2026-07-06-570bddba.md
     v: 0.0.0
-  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Add builtin rule documentation metadata\n\nBuiltin Oxlint rules now include generated documentation metadata in inspection results, including rule descriptions and documented default option values. The inspector UI now shows default options alongside configured options so rule settings are easier to compare with their documented defaults.\n\nThe generated metadata also handles nested option objects and normalizes zero-based option headings like `[1]` into ordinal labels such as `The 2nd option`.\n"
+  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    replay:\n      - exit-prerelease(npm:@oxlint-config-inspector/core)\n  npm:oxlint-config-inspector:\n    replay:\n      - exit-prerelease(npm:oxlint-config-inspector)\n---\n\n### Add builtin rule documentation metadata\n\nBuiltin Oxlint rules now include generated documentation metadata in inspection results, including rule descriptions and documented default option values. The inspector UI now shows default options alongside configured options so rule settings are easier to compare with their documented defaults.\n\nThe generated metadata also handles nested option objects and normalizes zero-based option headings like `[1]` into ordinal labels such as `The 2nd option`.\n"
     filename: 2026-07-07-ea158915.md
     v: 0.0.0
-  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n---\n\n## Remove `searchText` from `InspectedRule`\n\nThe `searchText` field has been removed from the `InspectedRule` type. Search consumers should index individual fields (`ruleId`, `name`, `pluginName`, `category`, `description`, `source`, `ruleType`, `aliases`, `replacedBy`) directly instead of relying on the pre-flattened aggregate string.\n"
+  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    replay:\n      - exit-prerelease(npm:@oxlint-config-inspector/core)\n---\n\n## Remove `searchText` from `InspectedRule`\n\nThe `searchText` field has been removed from the `InspectedRule` type. Search consumers should index individual fields (`ruleId`, `name`, `pluginName`, `category`, `description`, `source`, `ruleType`, `aliases`, `replacedBy`) directly instead of relying on the pre-flattened aggregate string.\n"
     filename: 2026-07-05-kppngqo.md
     v: 0.0.0
 core:packages:
@@ -23,14 +35,19 @@ core:packages:
   - id: npm:@oxlint-config-inspector/app
     updated: false
   - changelogIds:
+      - 2026-07-04-mr666nqk.md
+      - 2026-07-05-b7xq9m2r.md
+      - 2026-07-05-c0da41a4.md
       - 2026-07-05-open-dev-server.md
       - 2026-07-05-r8k2m5qz.md
+      - 2026-07-05-vk8q2n4p.md
       - 2026-07-06-4c47fd52.md
       - 2026-07-06-570bddba.md
       - 2026-07-07-ea158915.md
     id: npm:oxlint-config-inspector
     updated: true
   - changelogIds:
+      - 2026-07-04-mr666nqk.md
       - 2026-07-05-kppngqo.md
       - 2026-07-07-ea158915.md
     id: npm:@oxlint-config-inspector/core
@@ -38,7 +55,5 @@ core:packages:
 npm:packages:
   - id: npm:@oxlint-config-inspector/root
   - id: npm:@oxlint-config-inspector/app
-  - distTag: beta
-    id: npm:oxlint-config-inspector
-  - distTag: beta
-    id: npm:@oxlint-config-inspector/core
+  - id: npm:oxlint-config-inspector
+  - id: npm:@oxlint-config-inspector/core
