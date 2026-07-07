@@ -1,17 +1,31 @@
-import { resolveBaseUrlPath } from '@/lib/base-url'
 import { cn } from '@/utils/cn'
 
-type LogoProps = React.ComponentProps<'img'>
+type LogoProps = React.ComponentProps<'svg'>
 
 export function Logo(props: LogoProps) {
   const { className, ...rest } = props
 
   return (
-    <img
-      src={resolveBaseUrlPath('favicon.svg')}
-      alt='Oxlint Config Inspector'
-      className={cn('size-7', className)}
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='28'
+      height='28'
+      fill='none'
+      viewBox='0 0 100 100'
+      className={cn('text-foreground', className)}
       {...rest}
-    />
+    >
+      <path
+        d='M23.053 84q-6.87 0-9.869-3.752-2.92-3.751-2.92-9.692v-8.128q0-3.362-.79-5.393-.79-2.033-3-2.892-2.211-.939-6.474-.938v-6.41q4.263 0 6.474-.86 2.21-.937 3-2.97.79-2.031.79-5.393v-8.128q0-5.94 2.92-9.692 3-3.752 9.869-3.752H30v6.096h-6.868q-3.633 0-5.132 1.798-1.42 1.798-1.421 5.393v7.191q0 5.862-2.21 9.301-2.21 3.361-8.053 3.986v.47q5.843.546 8.052 3.986 2.211 3.439 2.211 9.3v7.192q0 3.595 1.421 5.393 1.5 1.797 5.132 1.797H30V84zm53.894-68q6.87 0 9.869 3.697 2.92 3.696 2.92 9.549v8.01q0 3.31.79 5.313t3 2.85q2.211.924 6.474.924v6.314q-4.263 0-6.474.848-2.21.924-3 2.926t-.79 5.314v8.009q0 5.853-2.92 9.55-3 3.696-9.869 3.696H70v-6.007h6.868q3.632 0 5.132-1.771 1.42-1.771 1.421-5.314v-7.085q0-5.775 2.21-9.164 2.212-3.312 8.053-3.928v-.462q-5.842-.54-8.052-3.928t-2.211-9.164v-7.085q0-3.543-1.421-5.314-1.5-1.77-5.132-1.771H70V16z'
+        fill='currentColor'
+      />
+      <path
+        stroke='#ff6200'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='6'
+        d='M50 36c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10m0 0v40M38 49h24M28 64c4.714 9 12.571 12 22 12s17.286-3 22-12m-44 0h9m26 0h9'
+      />
+    </svg>
   )
 }
