@@ -4,7 +4,14 @@ import { x } from 'tinyexec'
 
 let oxlintBinaryAvailability: Promise<boolean> | undefined
 
-export async function getOxlintRules() {
+/**
+ * @param useVitePlus - When `true`, runs `vp lint --rules --format=json` instead of `oxlint --rules --format=json`.
+ */
+export async function getOxlintRules(options?: { useVitePlus?: boolean }) {
+  if (options?.useVitePlus) {
+    return getVitePlusRules()
+  }
+
   if (!(await isOxlintBinaryAvailable())) {
     console.error('Unable to inspect builtin Oxlint rules because the `oxlint` binary is not available on PATH.')
     return []
@@ -15,6 +22,16 @@ export async function getOxlintRules() {
     return JSON.parse(rules.stdout) as RuleInfo[]
   } catch (error) {
     console.error('Error fetching Oxlint rules:', error)
+    return []
+  }
+}
+
+async function getVitePlusRules() {
+  try {
+    const rules = await x('vp', ['lint', '--rules', '--format=json'])
+    return JSON.parse(rules.stdout) as RuleInfo[]
+  } catch (error) {
+    console.error('Error fetching Vite+ rules:', error)
     return []
   }
 }
