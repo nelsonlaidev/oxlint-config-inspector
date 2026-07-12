@@ -4,10 +4,18 @@ import { x } from 'tinyexec'
 
 let oxlintBinaryAvailability: Promise<boolean> | undefined
 
+export type GetOxlintRulesOptions = {
+  /** When `true`, invokes the Vite+ (`vp`) binary instead of `oxlint`. */
+  useVitePlus?: boolean
+}
+
 /**
- * @param useVitePlus - When `true`, runs `vp lint --rules --format=json` instead of `oxlint --rules --format=json`.
+ * Fetches the list of builtin lint rules by invoking the linter binary.
+ *
+ * @param options - See {@link GetOxlintRulesOptions}.
+ * @returns The parsed rules, or an empty array if the binary is unavailable or the invocation fails.
  */
-export async function getOxlintRules(options?: { useVitePlus?: boolean }) {
+export async function getOxlintRules(options?: GetOxlintRulesOptions): Promise<RuleInfo[]> {
   if (options?.useVitePlus) {
     return getVitePlusRules()
   }

@@ -17,5 +17,6 @@ export type {
   RuleSeverity,
 } from './inspect'
 export { inspectConfig } from './inspect'
+export type { GetOxlintRulesOptions } from './rules'
 export { getOxlintRules } from './rules'
 export type { RuleInfo } from './types'

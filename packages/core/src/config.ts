@@ -165,10 +165,15 @@ async function tryLoad([filepath, ...rest]: string[], explorer: PublicExplorer):
   try {
     const result = await explorer.load(filepath)
     if (result && !result.isEmpty) return result
-  } catch {
-    // not found or unloadable
+  } catch (error) {
+    if (!isFileNotFoundError(error)) throw error
+    // file does not exist, try the next candidate
   }
   return tryLoad(rest, explorer)
+}
+
+function isFileNotFoundError(error: unknown): boolean {
+  return error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT'
 }
 
 /**
