@@ -17,6 +17,3 @@ publicHoistPattern:
 
 allowBuilds:
   esbuild: true
-
-minimumReleaseAgeExclude:
-  - tegami@1.2.1
