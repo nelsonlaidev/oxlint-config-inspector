@@ -168,6 +168,36 @@ describe('getConfig', () => {
     await expect(getConfig({ cwd: cwd.pathname })).resolves.toBeNull()
   })
 
+  test('loads Oxlint config from vite.config.ts lint block', async () => {
+    const cwd = new URL('vite-plus/', fixtureRoot)
+    const result = await getConfig({ cwd: cwd.pathname })
+
+    expect(result).not.toBeNull()
+    expect(result?.filepath.endsWith('/vite.config.ts')).toBe(true)
+    expect(result?.config).toMatchObject({
+      jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
+      options: { typeAware: true, typeCheck: true },
+      rules: { 'vite-plus/prefer-vite-plus-imports': 'error' },
+    })
+    expect(result?.config).not.toHaveProperty('staged')
+    expect(result?.config).not.toHaveProperty('fmt')
+    expect(result?.config).not.toHaveProperty('run')
+  })
+
+  test('returns null when vite.config.ts has no lint block', async () => {
+    const cwd = new URL('vite-plus-no-lint/', fixtureRoot)
+
+    await expect(getConfig({ cwd: cwd.pathname })).resolves.toBeNull()
+  })
+
+  test('prefers vite.config.ts over dedicated Oxlint config', async () => {
+    const cwd = new URL('vite-plus-priority/', fixtureRoot)
+    const result = await getConfig({ cwd: cwd.pathname })
+
+    expect(result?.filepath.endsWith('/vite.config.ts')).toBe(true)
+    expect(result?.config.rules).toEqual({ 'no-console': 'error' })
+  })
+
   test('reloads changed config content when cache is disabled', async () => {
     const cwd = await mkdtemp(path.join(tmpdir(), 'oxlint-config-inspector-'))
     temporaryDirectories.push(cwd)

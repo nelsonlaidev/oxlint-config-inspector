@@ -51,6 +51,7 @@
   "devDependencies": {
     "@types/node": "catalog:dev",
     "tsdown": "catalog:dev",
+    "vite-plus": "0.2.4",
     "vitest": "catalog:dev"
   },
   "engines": {

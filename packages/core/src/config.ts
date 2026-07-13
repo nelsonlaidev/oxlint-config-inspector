@@ -1,7 +1,8 @@
-import type { PublicExplorer } from 'cosmiconfig'
+import type { CosmiconfigResult, PublicExplorer } from 'cosmiconfig'
 import type { ParseError } from 'jsonc-parser'
 import type { OxlintConfig } from 'oxlint'
 
+import { access } from 'node:fs/promises'
 import path from 'node:path'
 
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig'
@@ -41,8 +42,10 @@ export type LoadedOxlintConfig = {
   filepath: string
 }
 
-/** Known Oxlint config file names, searched in order by cosmiconfig. */
-export const searchPlaces = ['.oxlintrc.json', '.oxlintrc.jsonc', 'oxlint.config.ts']
+/** Known Oxlint / Vite+ config file names, searched in order by cosmiconfig. */
+export const searchPlaces = ['vite.config.ts', '.oxlintrc.json', '.oxlintrc.jsonc', 'oxlint.config.ts']
+
+const VITE_CONFIG_BASENAME = 'vite.config.ts'
 
 function createExplorer(cache: boolean) {
   const loadTs = createTypeScriptLoader(cache)
@@ -78,7 +81,29 @@ function createTypeScriptLoader(cache: boolean): (filepath: string) => Promise<R
     moduleCache: cache,
   })
 
-  return async (filepath: string) => jiti.import<Record<string, unknown> | null>(filepath, { default: true })
+  return async (filepath: string) => {
+    const exported = await jiti.import(filepath, { default: true })
+
+    if (path.basename(filepath) === VITE_CONFIG_BASENAME) {
+      return extractViteLintConfig(exported)
+    }
+
+    return (exported as Record<string, unknown> | null) ?? null
+  }
+}
+
+function extractViteLintConfig(exported: unknown): Record<string, unknown> | null {
+  if (!exported || typeof exported !== 'object' || Array.isArray(exported)) {
+    return null
+  }
+
+  const lint = (exported as Record<string, unknown>).lint
+
+  if (!lint || typeof lint !== 'object' || Array.isArray(lint)) {
+    return null
+  }
+
+  return lint as Record<string, unknown>
 }
 
 /**
@@ -86,6 +111,8 @@ function createTypeScriptLoader(cache: boolean): (filepath: string) => Promise<R
  *
  * Discovers the config via cosmiconfig (searching from `cwd` or loading a
  * specific `configFile`), then recursively resolves all `extends` chains.
+ * Within each directory, {@link searchPlaces} are tried in order; empty configs
+ * (e.g. a Vite config without a `lint` block) are skipped so later places can win.
  *
  * @param options - See {@link GetConfigOptions}.
  * @returns The resolved config with all extensions flattened, or `null` if no config file is found.
@@ -95,7 +122,7 @@ export async function getConfig(options: GetConfigOptions = {}): Promise<LoadedO
   const explorer = options.cache === false ? createExplorer(false) : defaultExplorer
   const result = options.configFile
     ? await explorer.load(path.resolve(cwd, options.configFile))
-    : await explorer.search(cwd)
+    : await searchDirectory(path.resolve(cwd), explorer)
 
   if (!result || result.isEmpty) {
     return null
@@ -115,6 +142,38 @@ export async function getConfig(options: GetConfigOptions = {}): Promise<LoadedO
     files: [...files],
     filepath: result.filepath,
   }
+}
+
+async function searchDirectory(directory: string, explorer: PublicExplorer): Promise<CosmiconfigResult> {
+  const filepaths = searchPlaces.map((place) => path.join(directory, place))
+  const result = await tryLoad(filepaths, explorer)
+  if (result) return result
+
+  try {
+    await access(path.join(directory, 'package.json'))
+    return null
+  } catch {
+    // no package.json, walk up
+  }
+
+  const parent = path.dirname(directory)
+  return parent === directory ? null : searchDirectory(parent, explorer)
+}
+
+async function tryLoad([filepath, ...rest]: string[], explorer: PublicExplorer): Promise<CosmiconfigResult> {
+  if (!filepath) return null
+  try {
+    const result = await explorer.load(filepath)
+    if (result && !result.isEmpty) return result
+  } catch (error) {
+    if (!isFileNotFoundError(error)) throw error
+    // file does not exist, try the next candidate
+  }
+  return tryLoad(rest, explorer)
+}
+
+function isFileNotFoundError(error: unknown): boolean {
+  return error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT'
 }
 
 /**

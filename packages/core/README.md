@@ -79,6 +79,7 @@ The result includes:
 
 The loader searches for:
 
+- `vite.config.ts` (Vite+)
 - `.oxlintrc.json`
 - `.oxlintrc.jsonc`
 - `oxlint.config.ts`

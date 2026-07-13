@@ -75,4 +75,25 @@ describe('getOxlintRules', () => {
     expect(mockedX).toHaveBeenNthCalledWith(2, 'oxlint', ['--rules', '--format=json'])
     expect(mockedX).toHaveBeenNthCalledWith(3, 'oxlint', ['--rules', '--format=json'])
   })
+
+  test('runs vp lint --rules --format=json when useVitePlus is true', async () => {
+    const rules: RuleInfo[] = [
+      {
+        category: 'correctness',
+        default: true,
+        docs_url: 'https://example.com/vite-plus-rule',
+        fix: 'none',
+        scope: 'vite-plus',
+        type_aware: false,
+        value: 'prefer-vite-plus-imports',
+      },
+    ]
+    mockedX.mockResolvedValueOnce(commandResult(JSON.stringify(rules)))
+    const { getOxlintRules } = await importRulesModule()
+
+    await expect(getOxlintRules({ useVitePlus: true })).resolves.toEqual(rules)
+
+    expect(mockedX).toHaveBeenCalledTimes(1)
+    expect(mockedX).toHaveBeenCalledWith('vp', ['lint', '--rules', '--format=json'])
+  })
 })
