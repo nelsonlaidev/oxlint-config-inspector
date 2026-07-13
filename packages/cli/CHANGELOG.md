@@ -1,3 +1,9 @@
+## oxlint-config-inspector@1.1.0
+
+### Read Oxlint config from Vite+ `vite.config.ts`
+
+You can now inspect Oxlint rules and plugins defined in a Vite+ `vite.config.ts` `lint` block. When the block is absent, a dedicated Oxlint config file is used as fallback.
+
 ## oxlint-config-inspector@1.0.0
 
 ### Initial beta release
