@@ -1,6 +1,6 @@
 {
   "name": "oxlint-config-inspector",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "CLI tool for inspecting and browsing Oxlint configuration files.",
   "keywords": [
     "config-inspector",

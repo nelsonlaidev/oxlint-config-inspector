@@ -1,6 +1,6 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: minor\n  npm:oxlint-config-inspector:\n    type: minor\n---\n\n## Read Oxlint config from Vite+ `vite.config.ts`\n\nYou can now inspect Oxlint rules and plugins defined in a Vite+ `vite.config.ts` `lint` block. When the block is absent, a dedicated Oxlint config file is used as fallback.\n"
-    filename: 2026-07-12-2cdab5.md
+  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n## Include Oxlint default plugins\n\nEmpty configurations now report correctness rules from TypeScript, Unicorn, and Oxc as warnings, matching Oxlint's default plugin set.\n"
+    filename: 2026-07-15-9d37a6.md
     v: 0.0.0
 core:packages:
   - id: npm:@oxlint-config-inspector/root
@@ -8,11 +8,11 @@ core:packages:
   - id: npm:@oxlint-config-inspector/app
     updated: false
   - changelogIds:
-      - 2026-07-12-2cdab5.md
+      - 2026-07-15-9d37a6.md
     id: npm:oxlint-config-inspector
     updated: true
   - changelogIds:
-      - 2026-07-12-2cdab5.md
+      - 2026-07-15-9d37a6.md
     id: npm:@oxlint-config-inspector/core
     updated: true
 npm:packages:

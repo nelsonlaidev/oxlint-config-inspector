@@ -1,3 +1,9 @@
+## @oxlint-config-inspector/core@1.1.1
+
+### Include Oxlint default plugins
+
+Empty configurations now report correctness rules from TypeScript, Unicorn, and Oxc as warnings, matching Oxlint's default plugin set.
+
 ## @oxlint-config-inspector/core@1.1.0
 
 ### Read Oxlint config from Vite+ `vite.config.ts`
