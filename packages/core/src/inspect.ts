@@ -10,6 +10,10 @@ import { getPlugins } from './plugins'
 import { getOxlintRules } from './rules'
 import { getBoolean, getBuiltinRuleId, getPluginName, getString, isRecord, SCOPE_CONFIG } from './utils'
 
+// Oxlint enables these plugin scopes unless the root `plugins` field replaces the default set.
+// Source: https://github.com/oxc-project/oxc/blob/070cfc74fb8b3faa27fb272243ba4e989cde05f8/crates/oxc_linter/src/config/plugins.rs#L116-L122
+const DEFAULT_ENABLED_PLUGIN_NAMES = ['typescript', 'unicorn', 'oxc'] as const
+
 /**
  * Origin of a plugin entry discovered during config inspection.
  */
@@ -263,10 +267,8 @@ export function inspectLoadedConfig(
   plugins: PluginInfo[],
   pluginErrors: PluginLoadError[],
 ): InspectConfigResult {
-  const enabledPlugins = [
-    ...(config.config.plugins ?? []),
-    ...(config.config.overrides?.flatMap((o) => o.plugins ?? []) ?? []),
-  ]
+  const rootEnabledPlugins = config.config.plugins ?? DEFAULT_ENABLED_PLUGIN_NAMES
+  const enabledPlugins = [...rootEnabledPlugins, ...(config.config.overrides?.flatMap((o) => o.plugins ?? []) ?? [])]
 
   const catalog = createRuleCatalog(builtinRules, plugins, enabledPlugins, config.config.categories)
 
@@ -427,11 +429,11 @@ function createInspectedPlugins(plugins: PluginInfo[], rules: InspectedRule[]): 
 function createRuleCatalog(
   builtinRules: RuleInfo[],
   plugins: PluginInfo[],
-  enabledPlugins: string[] | undefined,
+  enabledPlugins: string[],
   categories?: RuleCategories,
 ): RuleCatalog {
   const bareBuiltinRuleIds = createBareBuiltinRuleIds(builtinRules)
-  const enabledPluginNames = new Set(['eslint', ...(enabledPlugins ?? [])])
+  const enabledPluginNames = new Set(['eslint', ...enabledPlugins])
   /**
    * When categories are not explicitly configured, Oxlint applies a default
    * severity of `warn` to all correctness rules via the `RulesBuilder` defaults.

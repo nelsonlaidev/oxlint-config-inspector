@@ -120,7 +120,64 @@ const pluginErrors: PluginLoadError[] = [
   },
 ]
 
+const defaultPluginRules: RuleInfo[] = [
+  createCorrectnessRule('eslint', true),
+  createCorrectnessRule('typescript', true),
+  createCorrectnessRule('unicorn', true),
+  createCorrectnessRule('oxc', true),
+  createCorrectnessRule('react', false),
+]
+
 describe('inspectLoadedConfig', () => {
+  test('enables the default Oxlint plugins when the root plugins field is omitted', () => {
+    const emptyConfig: LoadedOxlintConfig = {
+      config: {},
+      filepath: '/project/.oxlintrc.json',
+      files: ['/project/.oxlintrc.json'],
+    }
+
+    const result = inspectLoadedConfig(emptyConfig, defaultPluginRules, [], [])
+
+    expect(getEnabledRuleIds(result.rules)).toEqual([
+      'eslint/eslint-correctness',
+      'oxc/oxc-correctness',
+      'typescript/typescript-correctness',
+      'unicorn/unicorn-correctness',
+    ])
+    expect(result.rules.filter((rule) => rule.used).every((rule) => rule.severityStates.includes('warn'))).toBe(true)
+    expect(result.stats.enabledRules).toBe(4)
+  })
+
+  test('disables the default plugin scopes when the root plugins field is an empty array', () => {
+    const emptyPluginsConfig: LoadedOxlintConfig = {
+      config: {
+        plugins: [],
+      },
+      filepath: '/project/.oxlintrc.json',
+      files: ['/project/.oxlintrc.json'],
+    }
+
+    const result = inspectLoadedConfig(emptyPluginsConfig, defaultPluginRules, [], [])
+
+    expect(getEnabledRuleIds(result.rules)).toEqual(['eslint/eslint-correctness'])
+    expect(result.stats.enabledRules).toBe(1)
+  })
+
+  test('replaces the default plugin scopes with explicitly configured plugins', () => {
+    const reactConfig: LoadedOxlintConfig = {
+      config: {
+        plugins: ['react'],
+      },
+      filepath: '/project/.oxlintrc.json',
+      files: ['/project/.oxlintrc.json'],
+    }
+
+    const result = inspectLoadedConfig(reactConfig, defaultPluginRules, [], [])
+
+    expect(getEnabledRuleIds(result.rules)).toEqual(['eslint/eslint-correctness', 'react/react-correctness'])
+    expect(result.stats.enabledRules).toBe(2)
+  })
+
   test('normalizes builtin aliases, plugin metadata, unknown rules, usage, and stats', () => {
     const result = inspectLoadedConfig(config, builtinRules, plugins, pluginErrors)
 
@@ -313,3 +370,19 @@ describe('inspectLoadedConfig', () => {
     })
   })
 })
+
+function createCorrectnessRule(scope: string, enabledByDefault: boolean): RuleInfo {
+  return {
+    category: 'correctness',
+    default: enabledByDefault,
+    docs_url: `https://example.com/${scope}-correctness`,
+    fix: 'none',
+    scope,
+    type_aware: false,
+    value: `${scope}-correctness`,
+  }
+}
+
+function getEnabledRuleIds(rules: ReturnType<typeof inspectLoadedConfig>['rules']) {
+  return rules.filter((rule) => rule.used).map((rule) => rule.ruleId)
+}
