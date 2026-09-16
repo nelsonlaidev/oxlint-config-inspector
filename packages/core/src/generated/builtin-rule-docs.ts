@@ -121,6 +121,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   'eslint/guard-for-in': {
     description: 'Require for-in loops to include an if statement.',
   },
+  'eslint/id-denylist': {
+    description: 'Disallow specified identifiers',
+  },
   'eslint/id-length': {
     defaultOptions: {
       checkGeneric: true,
@@ -280,6 +283,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description: 'Disallow reassigning const variables.',
   },
   'eslint/no-constant-binary-expression': {
+    defaultOptions: {
+      checkRelationalComparisons: true,
+    },
     description: "Disallow expressions where the operation doesn't affect the value.",
   },
   'eslint/no-constant-condition': {
@@ -355,7 +361,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'eslint/no-eval': {
     defaultOptions: {
-      allowIndirect: true,
+      allowIndirect: false,
     },
     description:
       'Disallows referencing the eval function. This rule is aimed at preventing potentially dangerous, unnecessary, and slow code by disallowing the use of the eval() function.',
@@ -433,7 +439,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'eslint/no-irregular-whitespace': {
     defaultOptions: {
-      skipComments: true,
+      skipComments: false,
       skipJSXText: true,
       skipRegExps: true,
       skipStrings: true,
@@ -575,16 +581,11 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description: 'This rule disallows specified names from being used as exported names.',
   },
   'eslint/no-restricted-globals': {
-    defaultOptions: {
-      checkGlobalObject: false,
-      globalObjects: ['globalThis', 'self', 'window'],
-      globals: {},
-    },
     description: 'Specify global variable names that should not be used in your application.',
   },
   'eslint/no-restricted-imports': {
     description:
-      'This rule allows you to specify imports that you don’t want to use in your application. It applies to static imports only, not dynamic ones.',
+      'This rule allows you to specify imports that you don’t want to use in your application. It applies to static imports and to dynamic import() with a string-literal source; computed sources like import(bar) are ignored.',
   },
   'eslint/no-restricted-properties': {
     description: 'This rule allows you to disallow access to certain properties on certain objects.',
@@ -679,6 +680,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
       'In most cases, semicolons are not required in JavaScript in order for code to be parsed and executed as expected. Typically this occurs because semicolons are automatically inserted based on a fixed set of rules. This rule exists to detect those cases where a semicolon is NOT inserted automatically, and may be parsed differently than expected.',
   },
   'eslint/no-unmodified-loop-condition': {
+    defaultOptions: {
+      checkConditionalExpressions: false,
+    },
     description: 'Disallow references in loop conditions that are never modified within the loop.',
   },
   'eslint/no-unneeded-ternary': {
@@ -689,6 +693,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'eslint/no-unreachable': {
     description: 'Disallow unreachable code after return, throw, continue, and break statements.',
+  },
+  'eslint/no-unreachable-loop': {
+    description: 'Disallow loops whose body allows only one iteration.',
   },
   'eslint/no-unsafe-finally': {
     description: 'Disallow control flow statements in finally blocks.',
@@ -798,6 +805,11 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description: 'Disallows the use of the void operator.',
   },
   'eslint/no-warning-comments': {
+    defaultOptions: {
+      decoration: [],
+      location: '"start"',
+      terms: ['todo', 'fixme', 'xxx'],
+    },
     description: 'Disallows warning comments such as TODO, FIXME, XXX in code.',
   },
   'eslint/no-with': {
@@ -812,6 +824,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
       },
     },
     description: 'Require or disallow method and property shorthand syntax for object literals',
+  },
+  'eslint/one-var': {
+    description: 'Enforces variables to be declared either together or separately.',
   },
   'eslint/operator-assignment': {
     description:
@@ -833,6 +848,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   'eslint/prefer-destructuring': {
     defaultOptions: {
       'The 2nd option': {
+        enforceForDeclarationWithTypeAnnotation: false,
         enforceForRenamedProperties: false,
       },
     },
@@ -1222,7 +1238,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   'jest/no-large-snapshots': {
     defaultOptions: {
       allowedSnapshots: {},
-      inlineMaxSize: 50,
+      inlineMaxSize: null,
       maxSize: 50,
     },
     description: 'Disallow large snapshots.',
@@ -1427,6 +1443,12 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   'jsdoc/implements-on-classes': {
     description: 'Reports an issue with any non-constructor function using @implements.',
   },
+  'jsdoc/no-blank-blocks': {
+    defaultOptions: {
+      enableFixer: false,
+    },
+    description: 'Reports and optionally removes blocks with whitespace only.',
+  },
   'jsdoc/no-defaults': {
     defaultOptions: {
       noOptionalParamNames: false,
@@ -1444,6 +1466,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
       checkSetters: true,
       checkTypesPattern: '"^(?:[oO]bject|[aA]rray|PlainObject|Generic(?:Object|Array))$"',
       exemptedBy: ['inheritdoc'],
+      ignoreWhenAllParamsMissing: false,
+      interfaceExemptsParamsCheck: false,
+      useDefaultObjectProperties: false,
     },
     description: 'Requires that all function parameters are documented with JSDoc @param tags.',
   },
@@ -1532,6 +1557,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description: 'Inspects anchor link text for the use of ambiguous words.',
   },
   'jsx-a11y/anchor-has-content': {
+    defaultOptions: {
+      components: [],
+    },
     description:
       'Enforce that anchors have content and that the content is accessible to screen readers. Accessible means that it is not hidden using the aria-hidden prop.',
   },
@@ -1815,6 +1843,14 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   'node/callback-return': {
     description: 'Require return statements after callbacks.',
   },
+  'node/exports-style': {
+    defaultOptions: {
+      'The 2nd option': {
+        allowBatchAssign: false,
+      },
+    },
+    description: 'Enforce either module.exports or exports.',
+  },
   'node/global-require': {
     description: 'Require require() calls to be placed at top-level module scope.',
   },
@@ -1850,6 +1886,13 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     },
     description: 'Disallows synchronous methods from being called in Node.js code.',
   },
+  'node/no-top-level-await': {
+    defaultOptions: {
+      ignoreBin: false,
+    },
+    description:
+      'Disallows the use of top-level await, including for await...of loops and await using declarations that are not nested inside a function.',
+  },
   'oxc/approx-constant': {
     description:
       'Disallows the use of approximate constants, instead preferring the use of the constants in the Math object.',
@@ -1862,10 +1905,14 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'oxc/bad-char-at-comparison': {
     description:
-      'This rule warns when the return value of the charAt method is used to compare a string of length greater than 1.',
+      'This rule warns when a character accessed with charAt, at, or bracket notation is compared with a string of length greater than 1.',
   },
   'oxc/bad-comparison-sequence': {
     description: 'This rule applies when the comparison operator is applied two or more times in a row.',
+  },
+  'oxc/bad-match-all-arg': {
+    description:
+      'This rule warns when the matchAll method is called with a regular expression that does not have the global flag (g).',
   },
   'oxc/bad-min-max-func': {
     description:
@@ -2038,6 +2085,10 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     },
     description: 'Enforces an explicit type attribute for all HTML button elements.',
   },
+  'react/capitalized-calls': {
+    description:
+      'Disallows calling capitalized functions or methods directly during render instead of rendering them with JSX, since capitalized names are reserved for components.',
+  },
   'react/checked-requires-onchange-or-readonly': {
     defaultOptions: {
       ignoreExclusiveCheckedAttribute: false,
@@ -2053,8 +2104,14 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     },
     description: 'Enforces that React components have a displayName property.',
   },
+  'react/error-boundaries': {
+    description: 'Validates using error boundaries instead of try/catch around JSX for errors in child components.',
+  },
   'react/exhaustive-deps': {
     description: 'Verifies the list of dependencies for Hooks like useEffect and similar.',
+  },
+  'react/exhaustive-effect-dependencies': {
+    description: 'Validates that effect dependency arrays are exhaustive and contain no extraneous values.',
   },
   'react/forbid-component-props': {
     description:
@@ -2071,14 +2128,37 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description:
       "Requires that components wrapped with forwardRef must have a ref parameter. Omitting the ref argument is usually a bug, and components not using ref don't need to be wrapped by forwardRef.",
   },
+  'react/function-component-definition': {
+    description: 'Enforces a consistent function form for React function components.',
+  },
+  'react/globals': {
+    description:
+      'Disallows assigning to or mutating variables declared outside a component or hook during render; side effects must run outside of render.',
+  },
   'react/hook-use-state': {
     defaultOptions: {
       allowDestructuredState: false,
     },
     description: 'Ensure destructuring and symmetric naming of useState hook value and setter variables.',
   },
+  'react/hooks': {
+    description:
+      "Runs the React Compiler's Rules of Hooks validation: hooks must be called unconditionally, in a consistent order, at the top level of a component or hook, and not be used as first-class values.",
+  },
   'react/iframe-missing-sandbox': {
     description: 'Enforce the sandbox attribute on iframe elements.',
+  },
+  'react/immutability': {
+    description:
+      'Disallows mutating props, state, hook arguments, hook return values, and other values that are immutable by the Rules of React.',
+  },
+  'react/incompatible-library': {
+    description:
+      "Warns on usage of library APIs known to be incompatible with memoization (manual or automatic), such as react-hook-form's watch(), TanStack Table's useReactTable(), and TanStack Virtual's useVirtualizer().",
+  },
+  'react/invariant': {
+    description:
+      'Reports internal React Compiler invariant violations. These indicate a bug in the compiler itself, not in your code — consider reporting them to the oxc or React teams.',
   },
   'react/jsx-boolean-value': {
     defaultOptions: {
@@ -2204,6 +2284,10 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     },
     description: 'Disallow JSX prop spreading.',
   },
+  'react/memo-dependencies': {
+    description:
+      'Validates that useMemo() and useCallback() declare comprehensive dependency lists without extraneous values.',
+  },
   'react/no-array-index-key': {
     description: 'Warn if an element uses an Array index in its key.',
   },
@@ -2218,6 +2302,10 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'react/no-danger-with-children': {
     description: 'Disallows DOM elements from using both children and dangerouslySetInnerHTML properties.',
+  },
+  'react/no-deriving-state-in-effects': {
+    description:
+      'Disallows deriving values from state inside an effect and storing them back into state; derived values should be computed during render instead.',
   },
   'react/no-did-mount-set-state': {
     description: 'Disallows using setState in the componentDidMount lifecycle method.',
@@ -2317,18 +2405,27 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     },
     description: 'Enforces that React components are written as function components instead of class components.',
   },
-  'react/react-compiler': {
-    defaultOptions: {
-      reportAllBailouts: false,
-    },
+  'react/preserve-manual-memoization': {
     description:
-      "Runs the React Compiler's analysis in lint-only mode and reports code that violates the Rules of React — for example calling hooks conditionally, calling setState during render, accessing refs during render, or mutating props and state.",
+      'Validates that existing manual memoization (useMemo, useCallback, React.memo) is preserved by the React Compiler: the compiler only compiles code whose inferred dependencies match or exceed the manually specified ones.',
+  },
+  'react/purity': {
+    description:
+      'Validates that components and hooks are pure by checking that they do not call known-impure functions such as Math.random(), Date.now(), or performance.now() during render.',
   },
   'react/react-in-jsx-scope': {
     description: 'Enforces that React is imported and in-scope when using JSX syntax.',
   },
+  'react/refs': {
+    description:
+      'Validates correct usage of refs: ref.current may not be read or written during render, only in event handlers and effects.',
+  },
   'react/require-render-return': {
     description: 'Require render methods in ES5 and ES2015 React components to return a value.',
+  },
+  'react/rule-suppression': {
+    description:
+      'Reports ESLint/Oxlint suppressions of React rules (for example eslint-disable-next-line react-hooks/exhaustive-deps) inside a component or hook. The React Compiler skips functions containing such suppressions, since the suppressed violation may make compilation unsafe.',
   },
   'react/rules-of-hooks': {
     description:
@@ -2342,8 +2439,19 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description:
       'Detects components without children which can be self-closed to avoid unnecessary extra closing tags.',
   },
+  'react/set-state-in-effect': {
+    description: 'Disallows calling setState synchronously inside an effect body.',
+  },
+  'react/set-state-in-render': {
+    description:
+      'Disallows unconditionally setting state during render (including inside useMemo callbacks), which triggers additional renders and can cause infinite render loops.',
+  },
   'react/state-in-constructor': {
     description: 'Enforces the state initialization style to be either in a constructor or with a class property.',
+  },
+  'react/static-components': {
+    description:
+      'Validates that components are static — defined at module scope rather than recreated on every render — because dynamically recreated components reset state and cause excessive re-rendering.',
   },
   'react/style-prop-object': {
     defaultOptions: {
@@ -2351,8 +2459,28 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     },
     description: 'Require that the value of the prop style be an object or a variable that is an object.',
   },
+  'react/syntax': {
+    description:
+      'Reports invalid JavaScript encountered by React Compiler while analyzing a component or hook, such as reassigning a const binding.',
+  },
+  'react/todo': {
+    description:
+      'Reports code that React Compiler cannot yet analyze because it uses features the compiler has not implemented. These are skipped optimizations (bail-outs), not rule violations.',
+  },
+  'react/unsupported-syntax': {
+    description:
+      'Warns on syntax that React Compiler does not plan to support, such as eval; components and hooks using it are skipped, not optimized.',
+  },
+  'react/use-memo': {
+    description:
+      'Validates usage of the useMemo() hook against common mistakes, such as passing an async or generator callback or misusing its arguments.',
+  },
   'react/void-dom-elements-no-children': {
     description: 'Disallow void DOM elements (e.g. <img />, <br />) from receiving children.',
+  },
+  'react/void-use-memo': {
+    description:
+      'Validates that useMemo() callbacks return a value and that the memoized result is actually used by the component or hook.',
   },
   'react-perf/jsx-no-jsx-as-prop': {
     description: 'Prevent JSX elements that are local to the current method from being used as values of JSX props.',
@@ -2426,7 +2554,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
       fixStyle: '"separate-type-imports"',
       prefer: '"type-imports"',
     },
-    description: 'Enforce consistent usage of type imports.',
+    description: 'Enforce consistent usage of type imports by adding or removing the type keyword from imports.',
   },
   'typescript/dot-notation': {
     defaultOptions: {
@@ -2638,7 +2766,6 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'typescript/no-require-imports': {
     defaultOptions: {
-      allow: [],
       allowAsImport: false,
     },
     description: 'Forbids the use of CommonJS require calls.',
@@ -3024,6 +3151,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     },
     description: 'Enforce explicitly comparing the length or size property of a value.',
   },
+  'unicorn/explicit-timer-delay': {
+    description: 'Enforce or disallow explicit delay argument for setTimeout() and setInterval().',
+  },
   'unicorn/filename-case': {
     defaultOptions: {
       case: null,
@@ -3052,7 +3182,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'unicorn/new-for-builtins': {
     description:
-      'Enforces the use of new for the following builtins: Object, Array, ArrayBuffer, BigInt64Array, BigUint64Array, DataView, Date, Error, Float32Array, Float64Array, Function, Int8Array, Int16Array, Int32Array, Map, WeakMap, Set, WeakSet, Promise, RegExp, Uint8Array, Uint16Array, Uint32Array, Uint8ClampedArray, SharedArrayBuffer, Proxy, WeakRef, FinalizationRegistry.',
+      'Enforces the use of new for the following builtins: Object, Array, ArrayBuffer, BigInt64Array, BigUint64Array, DataView, Date, Error, Float16Array, Float32Array, Float64Array, Function, Int8Array, Int16Array, Int32Array, Map, WeakMap, Set, WeakSet, Promise, RegExp, Uint8Array, Uint16Array, Uint32Array, Uint8ClampedArray, SharedArrayBuffer, Proxy, WeakRef, FinalizationRegistry.',
   },
   'unicorn/no-abusive-eslint-disable': {
     description: 'Disallows oxlint-disable or eslint-disable comments without specifying rules.',
@@ -3090,6 +3220,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'unicorn/no-array-sort': {
     defaultOptions: {
+      allowAfterSpread: false,
       allowExpressionStatement: true,
     },
     description: 'Prefer using Array#toSorted() over Array#sort().',
@@ -3099,6 +3230,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'unicorn/no-await-in-promise-methods': {
     description: 'Disallow using await in Promise method parameters.',
+  },
+  'unicorn/no-confusing-array-with': {
+    description: 'Disallows confusing uses of Array#with().',
   },
   'unicorn/no-console-spaces': {
     description: 'Disallows leading/trailing space inside console.log() and similar methods.',
@@ -3280,7 +3414,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'unicorn/prefer-array-find': {
     description:
-      'Encourages using Array.prototype.find instead of filter(...)[0] or similar patterns when only the first matching element is needed.',
+      'Encourages using Array.prototype.find and Array.prototype.findLast instead of taking the first or last matching element from filter(...).',
   },
   'unicorn/prefer-array-flat': {
     description: 'Prefers Array#flat() over legacy techniques to flatten arrays.',
@@ -3608,7 +3742,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   'vitest/no-large-snapshots': {
     defaultOptions: {
       allowedSnapshots: {},
-      inlineMaxSize: 50,
+      inlineMaxSize: null,
       maxSize: 50,
     },
     description: 'Disallow large snapshots.',
@@ -3640,6 +3774,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
   },
   'vitest/padding-around-after-all-blocks': {
     description: 'This rule enforces a line of padding before and after 1 or more afterAll statements.',
+  },
+  'vitest/padding-around-test-blocks': {
+    description: 'This rule enforces a line of padding before and after 1 or more test/it statements.',
   },
   'vitest/prefer-called-exactly-once-with': {
     description:
@@ -3947,11 +4084,6 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description: 'Enforce imports from vue instead of @vue/.',
   },
   'vue/prop-name-casing': {
-    defaultOptions: {
-      'The 2nd option': {
-        ignoreProps: [],
-      },
-    },
     description: 'Enforce a specific casing (camelCase or snake\\_case) for Vue component prop names.',
   },
   'vue/require-default-export': {

@@ -81,6 +81,16 @@ console.log(result.rules)
 - Node.js 22 or newer.
 - The `oxlint` binary should be available on `PATH` when you want builtin rule metadata. If it is missing, the inspector still runs, but builtin rules cannot be cataloged and an error is logged.
 
+## Builtin Rule Descriptions
+
+Oxlint's CLI JSON output (`oxlint --rules --format=json`) does not expose rule
+descriptions, so the inspector fetches each rule's `docs_url` and bakes the
+descriptions into `packages/core/src/generated/builtin-rule-docs.ts`.
+
+This means descriptions are only as fresh as the last generation. Regenerate
+them with `pnpm generate:builtin-rule-docs` after upgrading Oxlint; this requires
+network access, and rules without fetchable docs are omitted.
+
 ## Packages
 
 | Package                         | Purpose                                                     |
