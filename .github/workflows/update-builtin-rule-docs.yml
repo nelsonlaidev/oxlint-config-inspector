@@ -1,0 +1,93 @@
+name: Update Builtin Rule Docs
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update-docs:
+    name: Update Builtin Rule Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Read current Oxlint version
+        id: current-version
+        run: |
+          version=$(node -e "const fs = require('fs'); const src = fs.readFileSync('packages/core/src/generated/builtin-rule-docs.ts', 'utf8'); const match = src.match(/\/\/ Oxlint version: (.+)/); console.log(match ? match[1].trim() : '')")
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Get latest Oxlint version
+        id: latest-version
+        run: echo "version=$(npm view oxlint version)" >> "$GITHUB_OUTPUT"
+
+      - name: Bump Oxlint
+        if: steps.current-version.outputs.version != steps.latest-version.outputs.version
+        run: pnpm up oxlint@latest
+
+      - name: Regenerate builtin rule docs
+        run: pnpm generate:builtin-rule-docs
+
+      - name: Check if generated docs changed
+        id: docs-changed
+        run: |
+          if git diff --quiet -- packages/core/src/generated/builtin-rule-docs.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create changelog
+        if: steps.docs-changed.outputs.changed == 'true'
+        env:
+          OX_VERSION: ${{ steps.latest-version.outputs.version }}
+        run: |
+          hash=$(openssl rand -hex 3)
+          cat > ".tegami/$(date +%F)-${hash}.md" <<EOF
+          ---
+          packages:
+            npm:@oxlint-config-inspector/core: patch
+            npm:oxlint-config-inspector: patch
+          ---
+
+          ### Update builtin rule docs for Oxlint ${OX_VERSION}
+
+          Builtin rule descriptions and documented default options are regenerated against the Oxlint ${OX_VERSION} rule set.
+          EOF
+
+      - name: Create or update pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          branch: chore/update-builtin-rule-docs
+          base: main
+          commit-message: "chore: update builtin rule docs for oxlint ${{ steps.latest-version.outputs.version }}"
+          title: "chore: update builtin rule docs for oxlint ${{ steps.latest-version.outputs.version }}"
+          body: |
+            Regenerates the builtin rule documentation metadata against Oxlint ${{ steps.latest-version.outputs.version }}.
+
+            - When the Oxlint version changed, the `oxlint` devDependency and lockfile are bumped together with the regenerated metadata.
+            - A Tegami changelog entry is included; merging this PR will open a release PR via Tegami.
+          delete-branch: true
