@@ -2,7 +2,7 @@ name: Update Builtin Rule Docs
 
 on:
   schedule:
-    - cron: "0 0 * * 1"
+    - cron: '0 0 * * 1'
   workflow_dispatch:
 
 permissions:
@@ -83,8 +83,8 @@ jobs:
           token: ${{ secrets.AUTOMATION_PAT }}
           branch: chore/update-builtin-rule-docs
           base: main
-          commit-message: "chore: update builtin rule docs for oxlint ${{ steps.latest-version.outputs.version }}"
-          title: "chore: update builtin rule docs for oxlint ${{ steps.latest-version.outputs.version }}"
+          commit-message: 'chore: update builtin rule docs for oxlint ${{ steps.latest-version.outputs.version }}'
+          title: 'chore: update builtin rule docs for oxlint ${{ steps.latest-version.outputs.version }}'
           body: |
             Regenerates the builtin rule documentation metadata against Oxlint ${{ steps.latest-version.outputs.version }}.
 
