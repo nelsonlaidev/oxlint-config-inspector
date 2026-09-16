@@ -82,6 +82,7 @@ const builtinRules: RuleInfo[] = [
 
 const plugins: PluginInfo[] = [
   {
+    entryKey: './demo-plugin.mjs',
     name: 'demo',
     resolvedPath: '/project/demo-plugin.mjs',
     rules: [
@@ -368,6 +369,60 @@ describe('inspectLoadedConfig', () => {
       totalRules: 7,
       unknownRules: 2,
     })
+  })
+
+  test('includes override-level JS plugins using resolved names and specifier fallback', () => {
+    const configWithJsPlugins: LoadedOxlintConfig = {
+      config: {
+        overrides: [
+          {
+            files: ['**/*.js'],
+            jsPlugins: ['./demo-plugin.mjs', { name: 'alias', specifier: './demo-plugin.mjs' }, './missing.mjs'],
+          },
+        ],
+      },
+      filepath: '/project/.oxlintrc.json',
+      files: ['/project/.oxlintrc.json'],
+    }
+
+    const result = inspectLoadedConfig(configWithJsPlugins, defaultPluginRules, plugins, [])
+
+    expect(result.overrideGroups[0]?.jsPlugins).toEqual(['demo', 'alias', './missing.mjs'])
+  })
+
+  test('resolves JS plugin names by entry key when a specifier is loaded under multiple aliases', () => {
+    const aliasPlugins: PluginInfo[] = [
+      {
+        entryKey: 'alias:./demo-plugin.mjs',
+        name: 'alias',
+        resolvedPath: '/project/demo-plugin.mjs',
+        rules: [],
+        specifier: './demo-plugin.mjs',
+      },
+      {
+        entryKey: './demo-plugin.mjs',
+        name: 'demo',
+        resolvedPath: '/project/demo-plugin.mjs',
+        rules: [],
+        specifier: './demo-plugin.mjs',
+      },
+    ]
+    const configWithAlias: LoadedOxlintConfig = {
+      config: {
+        overrides: [
+          {
+            files: ['**/*.js'],
+            jsPlugins: [{ name: 'alias', specifier: './demo-plugin.mjs' }, './demo-plugin.mjs'],
+          },
+        ],
+      },
+      filepath: '/project/.oxlintrc.json',
+      files: ['/project/.oxlintrc.json'],
+    }
+
+    const result = inspectLoadedConfig(configWithAlias, defaultPluginRules, aliasPlugins, [])
+
+    expect(result.overrideGroups[0]?.jsPlugins).toEqual(['alias', 'demo'])
   })
 })
 

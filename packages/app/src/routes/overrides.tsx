@@ -35,57 +35,65 @@ function RouteComponent() {
     <TabsContent value='overrides'>
       <div className='grid gap-4'>
         <Accordion>
-          {groups.map((group) => (
-            <AccordionItem key={group.index} value={`override-${group.index}`}>
-              <AccordionTrigger className='items-center'>
-                <div className='flex flex-1 flex-col justify-between gap-2 sm:flex-row sm:items-center'>
-                  <div className='min-w-0 flex-1 truncate'>Override #{group.index}</div>
-                  <OverrideSummaryIcons group={group} />
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className='space-y-3 [--key-value-grid-cols:3.5rem_1fr]'>
-                <KeyValue label='Files' value={group.files.join(', ')} />
-                {group.excludeFiles ? <KeyValue label='Exclude' value={group.excludeFiles.join(', ')} /> : null}
-                {group.plugins?.length ? <KeyValue label='Plugins' value={group.plugins.join(', ')} /> : null}
-                {group.rules.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Rule</TableHead>
-                        <TableHead>Severity</TableHead>
-                        <TableHead>Source</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {group.rules.map((rule) => (
-                        <TableRow
-                          key={rule.ruleId}
-                          className='cursor-pointer'
-                          onClick={() => {
-                            setSelectedRule(rule.ruleId)
-                          }}
-                        >
-                          <TableCell className='font-mono'>{rule.ruleId}</TableCell>
-                          <TableCell>
-                            <SeverityBadge severity={rule.severity} />
-                          </TableCell>
-                          <TableCell>
-                            <SourceBadge source={rule.source} />
-                          </TableCell>
+          {groups.map((group) => {
+            const pluginNames = getOverridePluginNames(group)
+
+            return (
+              <AccordionItem key={group.index} value={`override-${group.index}`}>
+                <AccordionTrigger className='items-center'>
+                  <div className='flex flex-1 flex-col justify-between gap-2 sm:flex-row sm:items-center'>
+                    <div className='min-w-0 flex-1 truncate'>Override #{group.index}</div>
+                    <OverrideSummaryIcons group={group} />
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className='space-y-3 [--key-value-grid-cols:3.5rem_1fr]'>
+                  <KeyValue label='Files' value={group.files.join(', ')} />
+                  {group.excludeFiles ? <KeyValue label='Exclude' value={group.excludeFiles.join(', ')} /> : null}
+                  {pluginNames.length > 0 ? <KeyValue label='Plugins' value={pluginNames.join(', ')} /> : null}
+                  {group.rules.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Rule</TableHead>
+                          <TableHead>Severity</TableHead>
+                          <TableHead>Source</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <MutedText>No rules configured for this override.</MutedText>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+                      </TableHeader>
+                      <TableBody>
+                        {group.rules.map((rule) => (
+                          <TableRow
+                            key={rule.ruleId}
+                            className='cursor-pointer'
+                            onClick={() => {
+                              setSelectedRule(rule.ruleId)
+                            }}
+                          >
+                            <TableCell className='font-mono'>{rule.ruleId}</TableCell>
+                            <TableCell>
+                              <SeverityBadge severity={rule.severity} />
+                            </TableCell>
+                            <TableCell>
+                              <SourceBadge source={rule.source} />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <MutedText>No rules configured for this override.</MutedText>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            )
+          })}
         </Accordion>
       </div>
     </TabsContent>
   )
+}
+
+function getOverridePluginNames(group: InspectedOverrideGroup) {
+  return [...new Set([...(group.plugins ?? []), ...(group.jsPlugins ?? [])])]
 }
 
 type OverrideSummaryIconsProps = {
@@ -104,7 +112,12 @@ function OverrideSummaryIcons(props: OverrideSummaryIconsProps) {
         tone='text-violet-500'
         value={group.excludeFiles?.length ?? 0}
       />
-      <OverrideSummaryIcon icon={PlugIcon} label='Plugins' tone='text-emerald-500' value={group.plugins?.length ?? 0} />
+      <OverrideSummaryIcon
+        icon={PlugIcon}
+        label='Plugins'
+        tone='text-emerald-500'
+        value={getOverridePluginNames(group).length}
+      />
       <OverrideSummaryIcon icon={ListIcon} label='Rules' tone='text-sky-500' value={group.rules.length} />
     </div>
   )
