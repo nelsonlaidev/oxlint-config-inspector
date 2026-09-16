@@ -9,31 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RulesRouteImport } from './routes/rules'
-import { Route as PluginsRouteImport } from './routes/plugins'
-import { Route as OverviewRouteImport } from './routes/overview'
-import { Route as OverridesRouteImport } from './routes/overrides'
-import { Route as ConfigFilesRouteImport } from './routes/config-files'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ConfigFilesRouteImport } from './routes/config-files'
+import { Route as OverridesRouteImport } from './routes/overrides'
+import { Route as OverviewRouteImport } from './routes/overview'
+import { Route as PluginsRouteImport } from './routes/plugins'
+import { Route as RulesRouteImport } from './routes/rules'
 
-const RulesRoute = RulesRouteImport.update({
-  id: '/rules',
-  path: '/rules',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PluginsRoute = PluginsRouteImport.update({
-  id: '/plugins',
-  path: '/plugins',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OverviewRoute = OverviewRouteImport.update({
-  id: '/overview',
-  path: '/overview',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OverridesRoute = OverridesRouteImport.update({
-  id: '/overrides',
-  path: '/overrides',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfigFilesRoute = ConfigFilesRouteImport.update({
@@ -41,9 +26,24 @@ const ConfigFilesRoute = ConfigFilesRouteImport.update({
   path: '/config-files',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const OverridesRoute = OverridesRouteImport.update({
+  id: '/overrides',
+  path: '/overrides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OverviewRoute = OverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PluginsRoute = PluginsRouteImport.update({
+  id: '/plugins',
+  path: '/plugins',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -99,32 +99,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/rules': {
-      id: '/rules'
-      path: '/rules'
-      fullPath: '/rules'
-      preLoaderRoute: typeof RulesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/plugins': {
-      id: '/plugins'
-      path: '/plugins'
-      fullPath: '/plugins'
-      preLoaderRoute: typeof PluginsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/overview': {
-      id: '/overview'
-      path: '/overview'
-      fullPath: '/overview'
-      preLoaderRoute: typeof OverviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/overrides': {
-      id: '/overrides'
-      path: '/overrides'
-      fullPath: '/overrides'
-      preLoaderRoute: typeof OverridesRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/config-files': {
@@ -134,11 +113,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfigFilesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/overrides': {
+      id: '/overrides'
+      path: '/overrides'
+      fullPath: '/overrides'
+      preLoaderRoute: typeof OverridesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/overview': {
+      id: '/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof OverviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plugins': {
+      id: '/plugins'
+      path: '/plugins'
+      fullPath: '/plugins'
+      preLoaderRoute: typeof PluginsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
