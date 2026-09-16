@@ -6,7 +6,7 @@ import type { RuleInfo } from './types'
 import pkgJson from '../package.json'
 import { getConfig } from './config'
 import { builtinRuleDocs } from './generated/builtin-rule-docs'
-import { getPlugins } from './plugins'
+import { getPluginEntryNames, getPlugins } from './plugins'
 import { getOxlintRules } from './rules'
 import { getBoolean, getBuiltinRuleId, getPluginName, getString, isRecord, SCOPE_CONFIG } from './utils'
 
@@ -190,6 +190,8 @@ export type InspectedOverrideGroup = {
   files: string[]
   /** Zero-based position of the override in the resolved config. */
   index: number
+  /** JS plugins enabled by this override block. */
+  jsPlugins?: string[]
   /** Plugins enabled by this override block. */
   plugins?: string[]
   /** Rules configured by this override block. */
@@ -274,7 +276,7 @@ export function inspectLoadedConfig(
 
   applyConfiguredRules(catalog, config.config.rules)
 
-  const overrideGroups = createInspectedOverrideGroups(catalog, config.config.overrides)
+  const overrideGroups = createInspectedOverrideGroups(catalog, config.config.overrides, plugins)
   const overrideSeveritiesByRuleId = createOverrideSeveritiesByRuleId(overrideGroups)
 
   const rules = [...catalog.rulesById.values()]
@@ -335,6 +337,7 @@ function createRulePluginFilters(rules: InspectedRule[]): string[] {
 function createInspectedOverrideGroups(
   catalog: RuleCatalog,
   overrides: LoadedOxlintConfig['config']['overrides'],
+  plugins: PluginInfo[],
 ): InspectedOverrideGroup[] {
   const groups: InspectedOverrideGroup[] = []
 
@@ -343,6 +346,7 @@ function createInspectedOverrideGroups(
       excludeFiles: override.excludeFiles,
       files: override.files,
       index,
+      jsPlugins: override.jsPlugins?.length ? getPluginEntryNames(override.jsPlugins, plugins) : undefined,
       plugins: override.plugins,
       rules: [],
     }

@@ -33,6 +33,8 @@ type PluginRuleInfo = {
  * Information about a successfully loaded JS plugin.
  */
 export type PluginInfo = {
+  /** Deduplication key of the declaring entry, matching {@link getPluginEntryKey}. */
+  entryKey: string
   name: string
   /** The resolved file path to the plugin module on disk. */
   resolvedPath: string
@@ -119,6 +121,31 @@ function getPluginEntries(config: LoadedOxlintConfig) {
 }
 
 /**
+ * Resolves display names for JS plugin entries declared in a single config block.
+ *
+ * Entries are matched to loaded plugins by their deduplication key so that the
+ * same specifier loaded under multiple aliases resolves deterministically. Entries
+ * that failed to load fall back to their alias or specifier.
+ *
+ * @param entries - JS plugin entries from a root or override config block.
+ * @param plugins - Successfully loaded plugins used to normalize names.
+ * @returns Display names in declaration order.
+ */
+export function getPluginEntryNames(entries: ExternalPluginEntry[], plugins: PluginInfo[]): string[] {
+  const namesByKey = new Map(plugins.map((plugin) => [plugin.entryKey, plugin.name]))
+
+  return entries.map((entry) => {
+    const loadedName = namesByKey.get(getPluginEntryKey(entry))
+
+    if (loadedName) {
+      return loadedName
+    }
+
+    return typeof entry === 'string' ? entry : entry.name
+  })
+}
+
+/**
  * Computes a deduplication key for a plugin entry.
  *
  * String entries use the specifier itself as the key. Object entries use
@@ -165,6 +192,7 @@ async function loadPlugin(entry: ExternalPluginEntry, configFilepath: string, pl
   const rules = getPluginRules(name, plugin)
 
   return {
+    entryKey: getPluginEntryKey(entry),
     name,
     resolvedPath,
     rules,
