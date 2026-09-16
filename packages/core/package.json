@@ -36,11 +36,11 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "tsdown --watch",
     "build": "tsdown",
-    "typecheck": "tsc --noEmit",
+    "dev": "tsdown --watch",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "cosmiconfig": "9.0.2",
