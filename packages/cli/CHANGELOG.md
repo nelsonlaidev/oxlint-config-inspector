@@ -1,3 +1,17 @@
+## oxlint-config-inspector@1.1.2
+
+### Refresh builtin rule documentation metadata
+
+Builtin rule descriptions and documented default options are regenerated against the Oxlint 1.83.0 rule set. New rules such as `react/hooks`, `react/purity`, `eslint/id-denylist`, and `eslint/one-var` are now cataloged, the `react/react-compiler` rule was replaced by a set of granular React Compiler rules, and several documented defaults were corrected.
+
+### Update dependencies
+
+Internal dependencies were updated, including `cosmiconfig` 10, `tinyexec` 1.3, `vite-plus` 0.3, and `yargs` 18.1.
+
+### Show override-level JS plugins in the Overrides tab
+
+Override blocks that declare `jsPlugins` now display those plugins in the Overrides tab and include them in the plugin count. JS plugin names are resolved by their declaration key, so the same specifier loaded under multiple aliases no longer resolves to the wrong name, and plugins that fail to load fall back to their alias or specifier.
+
 ## oxlint-config-inspector@1.1.1
 
 ### Include Oxlint default plugins
