@@ -57,7 +57,7 @@ console.log('[]');
     const unrelatedModules = path.join(root, 'unrelated/node_modules')
     await mkdir(path.join(unrelatedModules, 'vite-plus'), { recursive: true })
     await writeFile(path.join(unrelatedModules, 'vite-plus/package.json'), JSON.stringify({ name: 'vite-plus' }))
-    // Isolate the CLI cache and verify unrelated packages on NODE_PATH are ignored.
+
     await execFile(
       process.execPath,
       [

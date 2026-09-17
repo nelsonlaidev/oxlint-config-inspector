@@ -15,11 +15,17 @@ permissions:
 
 jobs:
   ci:
-    name: Code Quality and Build
-    runs-on: ubuntu-latest
+    name: Code Quality and Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
     env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ matrix.os == 'ubuntu-latest' && secrets.TURBO_TOKEN || '' }}
+      TURBO_TEAM: ${{ matrix.os == 'ubuntu-latest' && vars.TURBO_TEAM || '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
