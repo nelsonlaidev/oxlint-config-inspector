@@ -46,12 +46,15 @@ jobs:
         run: pnpm build
 
       - name: Run lint
+        if: runner.os == 'Linux'
         run: pnpm lint
 
       - name: Run type check
+        if: runner.os == 'Linux'
         run: pnpm typecheck
 
       - name: Run format check
+        if: runner.os == 'Linux'
         run: pnpm format:check
 
       - name: Run tests
