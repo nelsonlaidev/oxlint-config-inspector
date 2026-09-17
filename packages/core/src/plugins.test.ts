@@ -1,13 +1,14 @@
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { afterEach, describe, expect, test } from 'vitest'
 
 import { getConfig } from './config'
 import { getPlugins } from './plugins'
 
-const fixtureRoot = new URL('../test/fixtures/', import.meta.url)
+const fixtureRoot = fileURLToPath(new URL('../test/fixtures/', import.meta.url))
 const temporaryDirectories: string[] = []
 
 describe('getPlugins', () => {
@@ -20,8 +21,8 @@ describe('getPlugins', () => {
   })
 
   test('loads, aliases, deduplicates, and reports JS plugin errors', async () => {
-    const cwd = new URL('js-plugin/', fixtureRoot)
-    const config = await getConfig({ configFile: 'oxlint-fixture.json', cwd: cwd.pathname })
+    const cwd = path.join(fixtureRoot, 'js-plugin')
+    const config = await getConfig({ configFile: 'oxlint-fixture.json', cwd })
 
     if (!config) {
       throw new Error('Expected fixture config to load')
@@ -58,7 +59,7 @@ describe('getPlugins', () => {
         },
       ],
     ])
-    expect(result.plugins.every((plugin) => plugin.resolvedPath.endsWith('/plugin.mjs'))).toBe(true)
+    expect(result.plugins.every((plugin) => path.basename(plugin.resolvedPath) === 'plugin.mjs')).toBe(true)
     expect(result.errors).toHaveLength(1)
     expect(result.errors[0]?.message).toContain('Invalid Oxlint JS plugin')
     expect(result.errors[0]).toMatchObject({
@@ -115,7 +116,9 @@ describe('getPlugins', () => {
       name: 'npx-demo',
       specifier: 'eslint-plugin-npx-demo',
     })
-    expect(result.plugins[0]?.resolvedPath.endsWith('/node_modules/eslint-plugin-npx-demo/index.cjs')).toBe(true)
+    expect(
+      result.plugins[0]?.resolvedPath.endsWith(path.join('node_modules', 'eslint-plugin-npx-demo', 'index.cjs')),
+    ).toBe(true)
     expect(result.plugins[0]?.rules).toEqual([
       {
         meta: {

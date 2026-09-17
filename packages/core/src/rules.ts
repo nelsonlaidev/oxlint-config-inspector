@@ -27,6 +27,7 @@ export type GetOxlintRulesOptions = {
 export async function getOxlintRules(options?: GetOxlintRulesOptions): Promise<RuleInfo[]> {
   const cwd = path.resolve(options?.cwd ?? process.cwd())
   const entry = resolveVitePlusEntry(cwd)
+
   if (options?.useVitePlus ?? Boolean(entry)) {
     return getVitePlusRules(cwd, entry)
   }
@@ -47,6 +48,7 @@ export async function getOxlintRules(options?: GetOxlintRulesOptions): Promise<R
 
 function resolveVitePlusEntry(cwd: string): string | undefined {
   const require = createRequire(path.join(cwd, 'package.json'))
+
   // Resolve only project ancestors, excluding unrelated packages on NODE_PATH.
   for (let directory = cwd; ; directory = path.dirname(directory)) {
     try {
