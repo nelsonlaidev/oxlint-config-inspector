@@ -77,7 +77,7 @@ console.log('[]');
     )
 
     if (vitePlus) {
-      expect(await readFile(commandCwd, 'utf-8')).toBe(await realpath(cwd))
+      expect(await realpath(await readFile(commandCwd, 'utf-8'))).toBe(await realpath(cwd))
     }
     const recordedCalls = await readFile(calls, 'utf-8')
     const commands = recordedCalls
