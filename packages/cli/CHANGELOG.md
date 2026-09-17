@@ -1,3 +1,14 @@
+## oxlint-config-inspector@1.1.3
+
+### Discover rules for standalone configs in Vite+ projects
+
+Use `vp lint --rules` when Vite+ is installed in the inspected workspace,
+including when inspecting a nested `oxlint.config.ts`. This avoids invoking
+Vite+'s LSP-only `oxlint` wrapper and returning an empty builtin rule catalog.
+
+Resolve the Vite+ CLI from the inspected workspace and run it in that directory,
+so inspecting another workspace with `--cwd` also works when its `vp` is not on PATH.
+
 ## oxlint-config-inspector@1.1.2
 
 ### Refresh builtin rule documentation metadata
