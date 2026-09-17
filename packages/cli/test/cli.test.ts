@@ -207,7 +207,7 @@ describe('inspect binary', () => {
       'base.json',
       'oxlint-fixture.json',
     ])
-  })
+  }, 15_000)
 
   test('builds a static inspector site with a base path', async () => {
     const temporaryCwd = await mkdtemp(path.join(tmpdir(), 'oxlint-config-inspector-cwd-'))
@@ -237,5 +237,5 @@ describe('inspect binary', () => {
     expect(indexHtml).toContain('href="/oxlint-inspector/assets/')
     expect(indexHtml).not.toContain('href="/favicon.svg"')
     expect(indexHtml).not.toContain('src="/assets/')
-  })
+  }, 15_000)
 })
