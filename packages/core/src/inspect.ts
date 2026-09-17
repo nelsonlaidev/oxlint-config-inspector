@@ -247,7 +247,7 @@ export async function inspectConfig(options: GetConfigOptions = {}): Promise<Ins
 
   const isVitePlus = config.filepath.endsWith('vite.config.ts')
   const [builtinRules, loadedPlugins] = await Promise.all([
-    getOxlintRules({ useVitePlus: isVitePlus }),
+    getOxlintRules({ useVitePlus: isVitePlus ? true : undefined, cwd: options.cwd }),
     getPlugins(config),
   ])
 

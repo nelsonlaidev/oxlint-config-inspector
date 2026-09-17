@@ -1,5 +1,9 @@
 import type { RuleInfo } from './types'
 
+import { createRequire } from 'node:module'
+import path from 'node:path'
+import process from 'node:process'
+
 import { x } from 'tinyexec'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
@@ -29,7 +33,7 @@ describe('getOxlintRules', () => {
     mockedX.mockRejectedValueOnce(new Error('command not found'))
     const { getOxlintRules } = await importRulesModule()
 
-    await expect(getOxlintRules()).resolves.toEqual([])
+    await expect(getOxlintRules({ useVitePlus: false })).resolves.toEqual([])
 
     expect(mockedX).toHaveBeenCalledTimes(1)
     expect(mockedX).toHaveBeenCalledWith('oxlint', ['--version'])
@@ -53,7 +57,7 @@ describe('getOxlintRules', () => {
     mockedX.mockResolvedValueOnce(commandResult('1.72.0')).mockResolvedValueOnce(commandResult(JSON.stringify(rules)))
     const { getOxlintRules } = await importRulesModule()
 
-    await expect(getOxlintRules()).resolves.toEqual(rules)
+    await expect(getOxlintRules({ useVitePlus: false })).resolves.toEqual(rules)
 
     expect(mockedX).toHaveBeenCalledTimes(2)
     expect(mockedX).toHaveBeenNthCalledWith(1, 'oxlint', ['--version'])
@@ -67,8 +71,8 @@ describe('getOxlintRules', () => {
       .mockResolvedValueOnce(commandResult('[]'))
     const { getOxlintRules } = await importRulesModule()
 
-    await getOxlintRules()
-    await getOxlintRules()
+    await getOxlintRules({ useVitePlus: false })
+    await getOxlintRules({ useVitePlus: false })
 
     expect(mockedX).toHaveBeenCalledTimes(3)
     expect(mockedX).toHaveBeenNthCalledWith(1, 'oxlint', ['--version'])
@@ -94,6 +98,11 @@ describe('getOxlintRules', () => {
     await expect(getOxlintRules({ useVitePlus: true })).resolves.toEqual(rules)
 
     expect(mockedX).toHaveBeenCalledTimes(1)
-    expect(mockedX).toHaveBeenCalledWith('vp', ['lint', '--rules', '--format=json'])
+    const packagePath = createRequire(path.join(process.cwd(), 'package.json')).resolve('vite-plus/package.json')
+    expect(mockedX).toHaveBeenCalledWith(
+      process.execPath,
+      [path.join(path.dirname(packagePath), 'bin/vp'), 'lint', '--rules', '--format=json'],
+      { nodeOptions: { cwd: process.cwd() } },
+    )
   })
 })
