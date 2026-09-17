@@ -174,8 +174,8 @@ describe('inspect binary', () => {
 
     await cp(fixtureCwd, temporaryCwd, { recursive: true })
 
-    const outputDirectory = path.join(temporaryCwd, 'dist/oxlint-config-inspector')
-    const displayOutputDirectory = 'dist/oxlint-config-inspector'
+    const displayOutputDirectory = path.join('dist', 'oxlint-config-inspector')
+    const outputDirectory = path.join(temporaryCwd, displayOutputDirectory)
 
     const { stderr, stdout } = await runCli([
       'build',
@@ -197,7 +197,7 @@ describe('inspect binary', () => {
     expect(stdout).toContain('Reading Oxlint config from oxlint-fixture.json')
     expect(stdout).toContain('Loaded with 2 config files and')
     expect(stdout).toContain(`Copying inspector app to ${displayOutputDirectory}`)
-    expect(stdout).toContain(`Writing inspect data to ${displayOutputDirectory}/data.json`)
+    expect(stdout).toContain(`Writing inspect data to ${path.join(displayOutputDirectory, 'data.json')}`)
     expect(stdout).toContain(`Built to ${displayOutputDirectory}`)
     expect(stdout).toContain(`Serve with \`npx serve ${displayOutputDirectory}\``)
     expect(indexHtml).toContain('<div id="root"></div>')
