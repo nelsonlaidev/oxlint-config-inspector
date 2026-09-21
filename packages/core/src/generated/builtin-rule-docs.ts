@@ -3398,8 +3398,8 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
       },
       number: {
         fractionGroupLength: 'Infinity',
-        groupLength: 0,
-        minimumDigits: 0,
+        groupLength: 3,
+        minimumDigits: 5,
       },
       octal: {
         groupLength: 4,
@@ -3421,7 +3421,7 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description: 'Prefers Array#flat() over legacy techniques to flatten arrays.',
   },
   'unicorn/prefer-array-flat-map': {
-    description: 'Prefers the use of .flatMap() when map().flat() are used together.',
+    description: 'Prefers a single .flatMap() over .map().flat() or .filter().flatMap().',
   },
   'unicorn/prefer-array-index-of': {
     description:
