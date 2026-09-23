@@ -1,6 +1,6 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n## Discover rules for standalone configs in Vite+ projects\n\nUse `vp lint --rules` when Vite+ is installed in the inspected workspace,\nincluding when inspecting a nested `oxlint.config.ts`. This avoids invoking\nVite+'s LSP-only `oxlint` wrapper and returning an empty builtin rule catalog.\n\nResolve the Vite+ CLI from the inspected workspace and run it in that directory,\nso inspecting another workspace with `--cwd` also works when its `vp` is not on PATH.\n"
-    filename: 2026-09-17-a4c87e2f.md
+  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Update builtin rule docs for Oxlint 1.85.0\n\nBuiltin rule descriptions and documented default options are regenerated against the Oxlint 1.85.0 rule set.\n"
+    filename: 2026-09-23-9a7e4f.md
     v: 0.0.0
 core:packages:
   - id: npm:@oxlint-config-inspector/root
@@ -8,11 +8,11 @@ core:packages:
   - id: npm:@oxlint-config-inspector/app
     updated: false
   - changelogIds:
-      - 2026-09-17-a4c87e2f.md
+      - 2026-09-23-9a7e4f.md
     id: npm:oxlint-config-inspector
     updated: true
   - changelogIds:
-      - 2026-09-17-a4c87e2f.md
+      - 2026-09-23-9a7e4f.md
     id: npm:@oxlint-config-inspector/core
     updated: true
 npm:packages:
