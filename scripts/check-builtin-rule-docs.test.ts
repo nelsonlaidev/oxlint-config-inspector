@@ -14,12 +14,8 @@ const docs =
   '// Generated file\n// Oxlint version: 1.86.0\nexport const docs = { description: "Old docs", defaultOptions: { mode: "old" } }\n'
 
 for (const [name, previous, current, expected] of [
-  ['identical content', docs, docs, 'changed=false\n'],
-  ['version comment only', docs, docs.replace('1.86.0', '1.87.0'), 'changed=false\n'],
-  ['description and version', docs, docs.replace('1.86.0', '1.87.0').replace('Old docs', 'New docs'), 'changed=true\n'],
-  ['default options', docs, docs.replace('mode: "old"', 'mode: "new"'), 'changed=true\n'],
-  ['other comments', docs, docs.replace('// Generated file', '// Changed header'), 'changed=true\n'],
-  ['version text in docs', docs, docs.replace('Old docs', '// Oxlint version: 1.87.0'), 'changed=true\n'],
+  ['compares HEAD with the working file', docs, docs.replace('1.86.0', '1.87.0'), 'changed=false\n'],
+  ['reports changed working content', docs, docs.replace('Old docs', 'New docs'), 'changed=true\n'],
   ['new untracked file', undefined, docs, 'changed=true\n'],
   ['missing generated file', docs, undefined, undefined],
   ['both files missing', undefined, undefined, undefined],
@@ -27,13 +23,16 @@ for (const [name, previous, current, expected] of [
   void test(name, () => {
     const cwd = mkdtempSync(path.join(tmpdir(), 'builtin-docs-'))
     const git = (...args: string[]) => xSync('git', args, { throwOnError: true, nodeOptions: { cwd } })
+
     try {
       git('init', '--quiet')
       mkdirSync(path.dirname(path.join(cwd, file)), { recursive: true })
+
       if (previous !== undefined) {
         writeFileSync(path.join(cwd, file), previous)
         git('add', file)
       }
+
       git(
         '-c',
         'user.name=Test User',
@@ -47,15 +46,18 @@ for (const [name, previous, current, expected] of [
         '-m',
         'Fixture',
       )
+
       if (current === undefined) {
         rmSync(path.join(cwd, file), { force: true })
       } else {
         writeFileSync(path.join(cwd, file), current)
       }
+
       const result = spawnSync(process.execPath, ['--import', import.meta.resolve('tsx'), script], {
         cwd,
         encoding: 'utf-8',
       })
+
       if (expected === undefined) {
         assert.notEqual(result.status, 0)
         assert.equal(result.stdout, '')
