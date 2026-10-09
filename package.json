@@ -13,7 +13,8 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "tegami": "tsx scripts/tegami.ts",
-    "test": "turbo test",
+    "test": "pnpm test:scripts && turbo test",
+    "test:scripts": "tsx --test scripts/*.test.ts",
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck typecheck:root",
     "typecheck:root": "tsc --noEmit"
