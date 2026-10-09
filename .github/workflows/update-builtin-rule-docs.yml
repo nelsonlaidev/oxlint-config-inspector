@@ -52,12 +52,7 @@ jobs:
 
       - name: Check if generated docs changed
         id: docs-changed
-        run: |
-          if git diff --quiet -- packages/core/src/generated/builtin-rule-docs.ts; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+        run: pnpm exec tsx scripts/check-builtin-rule-docs.ts >> "$GITHUB_OUTPUT"
 
       - name: Create changelog
         if: steps.docs-changed.outputs.changed == 'true'
@@ -89,5 +84,5 @@ jobs:
             Regenerates the builtin rule documentation metadata against Oxlint ${{ steps.latest-version.outputs.version }}.
 
             - When the Oxlint version changed, the `oxlint` devDependency and lockfile are bumped together with the regenerated metadata.
-            - A Tegami changelog entry is included; merging this PR will open a release PR via Tegami.
+            - ${{ steps.docs-changed.outputs.changed == 'true' && 'Rule documentation changed. A Tegami patch changelog is included for the core and CLI packages.' || 'Only version metadata or development dependencies changed. No Tegami changelog or package release is needed.' }}
           delete-branch: true
