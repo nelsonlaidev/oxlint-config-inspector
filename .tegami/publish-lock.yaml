@@ -1,6 +1,6 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Update builtin rule docs for Oxlint 1.86.0\n\nBuiltin rule descriptions and documented default options are regenerated against the Oxlint 1.86.0 rule set.\n"
-    filename: 2026-10-01-71e777.md
+  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Update builtin rule docs for Oxlint 1.88.0\n\nBuiltin rule descriptions and documented default options are regenerated against the Oxlint 1.88.0 rule set.\n"
+    filename: 2026-10-14-fde3e0.md
     v: 0.0.0
 core:packages:
   - id: npm:@oxlint-config-inspector/root
@@ -8,11 +8,11 @@ core:packages:
   - id: npm:@oxlint-config-inspector/app
     updated: false
   - changelogIds:
-      - 2026-10-01-71e777.md
+      - 2026-10-14-fde3e0.md
     id: npm:oxlint-config-inspector
     updated: true
   - changelogIds:
-      - 2026-10-01-71e777.md
+      - 2026-10-14-fde3e0.md
     id: npm:@oxlint-config-inspector/core
     updated: true
 npm:packages:
