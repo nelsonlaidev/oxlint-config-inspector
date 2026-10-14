@@ -3559,6 +3559,9 @@ export const builtinRuleDocs: Record<string, BuiltinRuleDocMetadata> = {
     description: 'This rule prefers borrowing methods from the prototype instead of the instance.',
   },
   'unicorn/prefer-query-selector': {
+    defaultOptions: {
+      allowWithVariables: false,
+    },
     description:
       'Prefer .querySelector() over .getElementById(). And prefer .querySelectorAll() over .getElementsByClassName(), .getElementsByTagName(), and .getElementsByName().',
   },
