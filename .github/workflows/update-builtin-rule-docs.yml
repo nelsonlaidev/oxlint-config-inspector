@@ -49,7 +49,9 @@ jobs:
 
       - name: Bump Oxlint
         if: steps.current-version.outputs.version != steps.latest-version.outputs.version
-        run: pnpm up oxlint@latest --minimum-release-age=1440
+        env:
+          PNPM_CONFIG_MINIMUM_RELEASE_AGE: '1440'
+        run: pnpm up oxlint@latest
 
       - name: Verify installed Oxlint version
         id: verified-version
