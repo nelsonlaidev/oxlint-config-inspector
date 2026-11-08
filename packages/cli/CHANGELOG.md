@@ -1,3 +1,9 @@
+## oxlint-config-inspector@1.1.9
+
+### Update builtin rule docs for Oxlint 1.92.0
+
+Builtin rule descriptions and documented default options are regenerated against the Oxlint 1.92.0 rule set.
+
 ## oxlint-config-inspector@1.1.8
 
 ### Update builtin rule docs for Oxlint 1.91.0
