@@ -1,6 +1,9 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Update builtin rule docs for Oxlint 1.92.0\n\nBuiltin rule descriptions and documented default options are regenerated against the Oxlint 1.92.0 rule set.\n"
-    filename: 2026-11-08-e642b3.md
+  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Update builtin rule docs for Oxlint 1.94.0\n\nBuiltin rule descriptions and documented default options are regenerated against the Oxlint 1.94.0 rule set.\n"
+    filename: 2026-11-18-2e3bed.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@oxlint-config-inspector/core:\n    type: patch\n  npm:oxlint-config-inspector:\n    type: patch\n---\n\n### Fix documented string defaults\n\nBuiltin rule defaults now decode quoted strings correctly, including nested option properties and escaped characters.\n"
+    filename: 2026-11-18-a61b09.md
     v: 0.0.0
 core:packages:
   - id: npm:@oxlint-config-inspector/root
@@ -8,11 +11,13 @@ core:packages:
   - id: npm:@oxlint-config-inspector/app
     updated: false
   - changelogIds:
-      - 2026-11-08-e642b3.md
+      - 2026-11-18-2e3bed.md
+      - 2026-11-18-a61b09.md
     id: npm:oxlint-config-inspector
     updated: true
   - changelogIds:
-      - 2026-11-08-e642b3.md
+      - 2026-11-18-2e3bed.md
+      - 2026-11-18-a61b09.md
     id: npm:@oxlint-config-inspector/core
     updated: true
 npm:packages:
