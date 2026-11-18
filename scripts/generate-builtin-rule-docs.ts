@@ -3,6 +3,7 @@ import type { RuleInfo } from '../packages/core/src/types'
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { setTimeout as delay } from 'node:timers/promises'
+import { pathToFileURL } from 'node:url'
 
 import pLimit from 'p-limit'
 import { x } from 'tinyexec'
@@ -30,65 +31,69 @@ type RuleDocFetchResult = {
   skipped?: string
 }
 
-const oxlintRules = await getOxlintRules()
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const oxlintRules = await getOxlintRules()
 
-if (oxlintRules.length === 0) {
-  throw new Error('`oxlint --rules` returned no rules.')
-}
-
-const oxlintVersion = await getOxlintVersion()
-const rules = oxlintRules.filter((rule) => rule.docs_url.length > 0)
-const limit = pLimit(CONCURRENCY)
-const docResults = await Promise.all(
-  rules.map(async (rule, index) =>
-    limit(async () => {
-      const result = await fetchRuleDoc(rule)
-
-      if ((index + 1) % 50 === 0 || index + 1 === rules.length) {
-        process.stdout.write(`Fetched ${index + 1}/${rules.length} rule docs\n`)
-      }
-
-      return result
-    }),
-  ),
-)
-
-const metadataByRuleId: Record<string, BuiltinRuleDocMetadata> = {}
-const skippedRules: RuleDocFetchResult[] = []
-const failedRules: RuleDocFetchResult[] = []
-
-for (const result of docResults) {
-  if (result.metadata) {
-    metadataByRuleId[getBuiltinRuleId(result.rule)] = result.metadata
-  } else if (result.skipped) {
-    skippedRules.push(result)
-  } else {
-    failedRules.push(result)
-  }
-}
-
-if (failedRules.length > 0) {
-  process.stdout.write(`Failed to fetch ${failedRules.length} rule docs:\n`)
-
-  for (const failed of failedRules) {
-    process.stdout.write(`- ${getBuiltinRuleId(failed.rule)}: ${failed.failure ?? 'unknown error'}\n`)
+  if (oxlintRules.length === 0) {
+    throw new Error('`oxlint --rules` returned no rules.')
   }
 
-  throw new Error('Aborted: no output written.')
-}
+  const oxlintVersion = await getOxlintVersion()
+  const rules = oxlintRules.filter((rule) => rule.docs_url.length > 0)
+  const limit = pLimit(CONCURRENCY)
+  const docResults = await Promise.all(
+    rules.map(async (rule, index) =>
+      limit(async () => {
+        const result = await fetchRuleDoc(rule)
 
-await mkdir(path.dirname(OUTPUT_PATH), { recursive: true })
-await writeFile(OUTPUT_PATH, createGeneratedFile(metadataByRuleId, oxlintVersion))
+        if ((index + 1) % 50 === 0 || index + 1 === rules.length) {
+          process.stdout.write(`Fetched ${index + 1}/${rules.length} rule docs\n`)
+        }
 
-await x('oxfmt', [OUTPUT_PATH])
+        return result
+      }),
+    ),
+  )
 
-process.stdout.write(`Generated ${Object.keys(metadataByRuleId).length} rule doc metadata entries at ${OUTPUT_PATH}\n`)
+  const metadataByRuleId: Record<string, BuiltinRuleDocMetadata> = {}
+  const skippedRules: RuleDocFetchResult[] = []
+  const failedRules: RuleDocFetchResult[] = []
 
-if (skippedRules.length > 0) {
-  process.stdout.write(`Skipped ${skippedRules.length} rule docs:\n`)
+  for (const result of docResults) {
+    if (result.metadata) {
+      metadataByRuleId[getBuiltinRuleId(result.rule)] = result.metadata
+    } else if (result.skipped) {
+      skippedRules.push(result)
+    } else {
+      failedRules.push(result)
+    }
+  }
 
-  for (const skipped of skippedRules) {
-    process.stdout.write(`- ${getBuiltinRuleId(skipped.rule)}: ${skipped.skipped ?? 'unknown reason'}\n`)
+  if (failedRules.length > 0) {
+    process.stdout.write(`Failed to fetch ${failedRules.length} rule docs:\n`)
+
+    for (const failed of failedRules) {
+      process.stdout.write(`- ${getBuiltinRuleId(failed.rule)}: ${failed.failure ?? 'unknown error'}\n`)
+    }
+
+    throw new Error('Aborted: no output written.')
+  }
+
+  await mkdir(path.dirname(OUTPUT_PATH), { recursive: true })
+  await writeFile(OUTPUT_PATH, createGeneratedFile(metadataByRuleId, oxlintVersion))
+
+  await x('oxfmt', [OUTPUT_PATH])
+
+  process.stdout.write(
+    `Generated ${Object.keys(metadataByRuleId).length} rule doc metadata entries at ${OUTPUT_PATH}\n`,
+  )
+
+  if (skippedRules.length > 0) {
+    process.stdout.write(`Skipped ${skippedRules.length} rule docs:\n`)
+
+    for (const skipped of skippedRules) {
+      process.stdout.write(`- ${getBuiltinRuleId(skipped.rule)}: ${skipped.skipped ?? 'unknown reason'}\n`)
+    }
   }
 }
 
@@ -164,7 +169,7 @@ async function getOxlintVersion() {
   }
 }
 
-function parseRuleMarkdown(markdown: string): BuiltinRuleDocMetadata {
+export function parseRuleMarkdown(markdown: string): BuiltinRuleDocMetadata {
   const description = getFirstParagraph(getSection(markdown, 'What it does'))
   const options = getRuleOptions(getSection(markdown, 'Configuration'))
   const defaultOptions = createDefaultOptions(options)
@@ -494,7 +499,11 @@ function parseDefaultValue(value: string): unknown {
     return Number(trimmed)
   }
 
-  if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+  if (
+    (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+    (trimmed.startsWith('[') && trimmed.endsWith(']')) ||
+    (trimmed.startsWith('"') && trimmed.endsWith('"'))
+  ) {
     try {
       return JSON.parse(trimmed)
     } catch {
